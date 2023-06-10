@@ -1,26 +1,15 @@
-# Use the official Ruby 3.1.4 image as the base image
+# syntax=docker/dockerfile:1
 FROM ruby:3.1.4
-
-# Set the working directory inside the container
-WORKDIR /app
-
-# Install system dependencies
 RUN apt-get update -qq && apt-get install -y \
+  postgresql-client \
   build-essential \
   libpq-dev \
   nodejs
 
-# Copy the Gemfile and Gemfile.lock into the container
-COPY Gemfile Gemfile.lock ./
-
-# Install project dependencies
-RUN bundle install --jobs=4 --retry=3
-
-# Copy the application code into the container
+WORKDIR /app
+COPY Gemfile* .
+RUN bundle install
 COPY . .
-
-# Expose port 3000 to the host machine
 EXPOSE 3000
-
-# Set the default command to start the Rails server
+CMD ["rake", "tmp:pids:clear"]
 CMD ["rails", "server", "-b", "0.0.0.0"]
