@@ -17,6 +17,7 @@ module Api
         resource '*', :headers => :any, :methods => [:get, :put, :post, :options, :delete]
       end
     end
+    
     # Configuration for the application, engines, and railties goes here.
     #
     # These settings can be overridden in specific environments using the files
