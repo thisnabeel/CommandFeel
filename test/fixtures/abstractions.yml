@@ -1,0 +1,21 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  abstractable_id: 1
+  abstractable_type: MyString
+  article: MyText
+  last_edited_by: 1
+  preview: MyString
+  position: 1
+  source_url: MyString
+  body: MyText
+
+two:
+  abstractable_id: 1
+  abstractable_type: MyString
+  article: MyText
+  last_edited_by: 1
+  preview: MyString
+  position: 1
+  source_url: MyString
+  body: MyText

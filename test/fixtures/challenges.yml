@@ -1,0 +1,19 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  challengeable_id: 1
+  challengeable_type: MyString
+  preview: MyString
+  position: 1
+  source_url: MyString
+  body: MyText
+  title: MyString
+
+two:
+  challengeable_id: 1
+  challengeable_type: MyString
+  preview: MyString
+  position: 1
+  source_url: MyString
+  body: MyText
+  title: MyString

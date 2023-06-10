@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  quizable_type: MyString
+  quizable_id: 1
+  jeopardy: false
+  question: MyText
+  position: 1
+
+two:
+  quizable_type: MyString
+  quizable_id: 1
+  jeopardy: false
+  question: MyText
+  position: 1

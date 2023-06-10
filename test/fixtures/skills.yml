@@ -1,0 +1,25 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  title: MyString
+  image: MyString
+  description: MyText
+  difficulty: 1
+  position: 1
+  skill: one
+  visibility: false
+  code: MyString
+  slug: MyString
+  is_course: false
+
+two:
+  title: MyString
+  image: MyString
+  description: MyText
+  difficulty: 1
+  position: 1
+  skill: two
+  visibility: false
+  code: MyString
+  slug: MyString
+  is_course: false
