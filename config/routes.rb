@@ -1,4 +1,11 @@
 Rails.application.routes.draw do
+  # devise_for :users, controllers: {
+  #       sessions: 'users/sessions',
+  #       registrations: 'users/registrations',
+  # }
+  post "/users/sign_up" => "users/sessions#sign_up"
+  post "/users/sign_in" => "users/sessions#create"
+  get "/users/sign_out" => "users/sessions#destroy"
   resources :quizzes
   resources :challenges
   resources :abstractions

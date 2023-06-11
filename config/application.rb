@@ -10,6 +10,8 @@ module Api
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 7.0
+    config.session_store :disabled
+
 
     config.middleware.insert_before 0, Rack::Cors do
       allow do
@@ -17,7 +19,7 @@ module Api
         resource '*', :headers => :any, :methods => [:get, :put, :post, :options, :delete]
       end
     end
-    
+
     # Configuration for the application, engines, and railties goes here.
     #
     # These settings can be overridden in specific environments using the files
