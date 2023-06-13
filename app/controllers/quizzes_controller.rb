@@ -3,7 +3,7 @@ class QuizzesController < ApplicationController
 
   # GET /quizzes
   def index
-    @quizzes = Quiz.all
+    @quizzes = Quiz.all.shuffle
 
     render json: @quizzes
   end
