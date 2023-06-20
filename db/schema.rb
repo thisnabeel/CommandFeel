@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_06_11_083730) do
+ActiveRecord::Schema[7.0].define(version: 2023_06_20_084656) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "timescaledb"
@@ -48,6 +48,16 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_11_083730) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["chapter_id"], name: "index_chapters_on_chapter_id"
+  end
+
+  create_table "quiz_choices", force: :cascade do |t|
+    t.bigint "quiz_id", null: false
+    t.integer "position"
+    t.boolean "correct", default: false
+    t.text "body"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["quiz_id"], name: "index_quiz_choices_on_quiz_id"
   end
 
   create_table "quizzes", force: :cascade do |t|
@@ -96,5 +106,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_11_083730) do
   end
 
   add_foreign_key "chapters", "chapters"
+  add_foreign_key "quiz_choices", "quizzes"
   add_foreign_key "skills", "skills"
 end

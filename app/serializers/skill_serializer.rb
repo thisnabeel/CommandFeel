@@ -6,6 +6,7 @@ class SkillSerializer < ActiveModel::Serializer
   attributes :challenges
   attributes :quizzes
 
+
   def options
     instance_options[:serializer_options]
   end
@@ -30,7 +31,8 @@ class SkillSerializer < ActiveModel::Serializer
 
   def quizzes
     if options && options[:quizzes] === true
-      return object.quizzes
+      return ActiveModel::Serializer::CollectionSerializer.new(@object.quizzes, serializer: QuizSerializer)
+
     else
       return []
     end

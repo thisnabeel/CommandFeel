@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  quiz: one
+  position: 1
+  correct: false
+  body: MyText
+
+two:
+  quiz: two
+  position: 1
+  correct: false
+  body: MyText
