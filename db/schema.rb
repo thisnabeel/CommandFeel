@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_06_20_084656) do
+ActiveRecord::Schema[7.0].define(version: 2023_07_01_101527) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "timescaledb"
@@ -28,6 +28,15 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_20_084656) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "algorithms", force: :cascade do |t|
+    t.string "title"
+    t.text "description"
+    t.text "expected"
+    t.integer "difficulty"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "challenges", force: :cascade do |t|
     t.integer "challengeable_id"
     t.string "challengeable_type"
@@ -38,6 +47,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_20_084656) do
     t.string "title"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "codeable", default: false
   end
 
   create_table "chapters", force: :cascade do |t|
@@ -48,6 +58,22 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_20_084656) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["chapter_id"], name: "index_chapters_on_chapter_id"
+  end
+
+  create_table "programming_language_traits", force: :cascade do |t|
+    t.integer "programming_language_id"
+    t.integer "trait_id"
+    t.text "body"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "programming_languages", force: :cascade do |t|
+    t.string "title"
+    t.integer "position"
+    t.string "editor_slug"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "quiz_choices", force: :cascade do |t|
@@ -84,6 +110,13 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_20_084656) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["skill_id"], name: "index_skills_on_skill_id"
+  end
+
+  create_table "traits", force: :cascade do |t|
+    t.string "title"
+    t.text "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "users", force: :cascade do |t|

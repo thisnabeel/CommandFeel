@@ -11,6 +11,10 @@ gem 'devise'
 # Use postgresql as the database for Active Record
 gem "pg", "~> 1.1"
 
+gem 'sandbox'
+
+gem 'httparty'
+
 gem 'figaro'
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", "~> 5.0"

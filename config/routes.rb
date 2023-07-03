@@ -1,4 +1,8 @@
 Rails.application.routes.draw do
+  resources :programming_language_traits
+  resources :traits
+  resources :programming_languages
+  resources :algorithms
   resources :quiz_choices
   # devise_for :users, controllers: {
   #       sessions: 'users/sessions',
@@ -7,6 +11,12 @@ Rails.application.routes.draw do
   post "/users/sign_up" => "users/sessions#sign_up"
   post "/users/sign_in" => "users/sessions#create"
   get "/users/sign_out" => "users/sessions#destroy"
+
+  get "/programming_languages/:id/traits" => "programming_languages#traits"
+
+  get "/programming_languages/:programming_language_id/traits/:trait_id" => "programming_language_traits#find"
+
+  post "/execute_code" => "algorithms#execute_code"
   resources :quizzes
   resources :challenges
   resources :abstractions
