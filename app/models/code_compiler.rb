@@ -47,6 +47,10 @@ class CodeCompiler < ApplicationRecord
             return jdoodle("rust", 1)
         end
 
+        if ["octave"].include? language
+            return jdoodle("octave", 1)
+        end
+
     end
 
 
