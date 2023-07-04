@@ -4,7 +4,7 @@ class AlgorithmSerializer < ActiveModel::Serializer
 
   def expected_with_type
     x = object.expected
-    if !x.present?
+    if !x.present? || x === ""
       return nil
     end
 
