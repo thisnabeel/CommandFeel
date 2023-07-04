@@ -3,13 +3,22 @@ class ProgrammingLanguagesController < ApplicationController
 
   # GET /programming_languages
   def index
-    @programming_languages = ProgrammingLanguage.all
+    @programming_languages = ProgrammingLanguage.all.order("position ASC")
 
     render json: @programming_languages
   end
 
   def traits
     render json: @programming_language.programming_language_traits
+  end
+
+  def order
+    list = params[:list]
+    puts list
+    list.each do |item|
+      ProgrammingLanguage.find(item["id"].to_i).update(position: item["position"])
+    end
+    render json: params[:list]
   end
 
   # GET /programming_languages/1

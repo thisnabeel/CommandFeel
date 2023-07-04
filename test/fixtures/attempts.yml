@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  algorithm_id: 1
+  programming_language_id: 1
+  user_id: 1
+  error_message: MyText
+  passing: false
+
+two:
+  algorithm_id: 1
+  programming_language_id: 1
+  user_id: 1
+  error_message: MyText
+  passing: false

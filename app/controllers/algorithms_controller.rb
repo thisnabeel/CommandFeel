@@ -3,7 +3,7 @@ class AlgorithmsController < ApplicationController
 
   # GET /algorithms
   def index
-    @algorithms = Algorithm.all
+    @algorithms = Algorithm.all.order("position ASC")
 
     render json: @algorithms
   end
@@ -26,6 +26,16 @@ class AlgorithmsController < ApplicationController
     else
       render json: @algorithm.errors, status: :unprocessable_entity
     end
+  end
+
+
+  def order
+    list = params[:list]
+    puts list
+    list.each do |item|
+      Algorithm.find(item["id"]).update(position: item["position"])
+    end
+    render json: params[:list]
   end
 
   # PATCH/PUT /algorithms/1

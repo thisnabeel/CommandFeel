@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_07_01_101527) do
+ActiveRecord::Schema[7.0].define(version: 2023_07_04_233639) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "timescaledb"
@@ -33,6 +33,17 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_01_101527) do
     t.text "description"
     t.text "expected"
     t.integer "difficulty"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "position", default: 1
+  end
+
+  create_table "attempts", force: :cascade do |t|
+    t.integer "algorithm_id"
+    t.integer "programming_language_id"
+    t.integer "user_id"
+    t.text "error_message"
+    t.boolean "passing"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
