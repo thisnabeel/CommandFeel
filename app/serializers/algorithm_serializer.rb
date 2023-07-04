@@ -4,6 +4,10 @@ class AlgorithmSerializer < ActiveModel::Serializer
 
   def expected_with_type
     x = object.expected
+    if !x.present?
+      return nil
+    end
+
     if x.starts_with? "STRING"
       return x.split("STRING ")[1]
     end
@@ -15,5 +19,8 @@ class AlgorithmSerializer < ActiveModel::Serializer
     if x.starts_with? "BOOLEAN"
       return x.split("BOOLEAN ")[1]
     end
+
+    return nil
+
   end
 end
