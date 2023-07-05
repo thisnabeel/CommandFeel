@@ -14,7 +14,7 @@ class AlgorithmsController < ApplicationController
   end
 
   def execute_code
-    render json: CodeCompiler.run(params[:language], params[:code])
+    render json: CodeCompiler.run(params)
   end
   
   # POST /algorithms

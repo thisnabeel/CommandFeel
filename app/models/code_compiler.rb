@@ -1,53 +1,54 @@
 class CodeCompiler < ApplicationRecord
     include HTTParty
     
-    def self.run(language, code)
+    def self.run(options)
 
-        @@language = language
-        @@code = code
+        @@options = options
+        @@language = ProgrammingLanguage.find(options[:programming_language_id])
+        slug = @@language.editor_slug
+        User.find(@@options[:user_id])
 
-        if ["ruby"].include? language
-            return jdoodle(language, 0)
+        if ["ruby"].include? slug
+            return jdoodle("ruby", 0)
         end
 
-
-        if ["js", "javascript", "nodejs"].include? language
+        if ["js", "javascript", "nodejs"].include? slug
             return jdoodle("nodejs", 1)
         end
 
-        if ["java"].include? language
+        if ["java"].include? slug
             return jdoodle("java", 1)
         end
 
-        if ["go"].include? language
+        if ["go"].include? slug
             return jdoodle("go", 1)
         end
 
-        if ["c++", "cpp"].include? language
+        if ["c++", "cpp"].include? slug
             return jdoodle("cpp", 1)
         end
 
-        if ["c#", "csharp"].include? language
+        if ["c#", "csharp"].include? slug
             return jdoodle("csharp", 1)
         end
 
-        if ["python"].include? language
+        if ["python"].include? slug
             return jdoodle("python3", 1)
         end
 
-        if ["swift"].include? language
+        if ["swift"].include? slug
             return jdoodle("swift", 1)
         end
 
-        if ["kotlin"].include? language
+        if ["kotlin"].include? slug
             return jdoodle("kotlin", 1)
         end
 
-        if ["rust"].include? language
+        if ["rust"].include? slug
             return jdoodle("rust", 1)
         end
 
-        if ["octave"].include? language
+        if ["octave"].include? slug
             return jdoodle("octave", 1)
         end
 
@@ -61,7 +62,7 @@ class CodeCompiler < ApplicationRecord
         puts "Running #{language} Code"
 
         data = {
-            script: @@code,
+            script: @@options[:code],
             language: language,
             versionIndex: versionIndex,
             clientId: "269b93cf4a1fb308d1806fff7e4fe237",
@@ -77,6 +78,30 @@ class CodeCompiler < ApplicationRecord
             )
             puts res
             puts res["output"]
+
+            user_id = @@options[:user_id]
+            algorithm_id =  @@options[:algorithm_id]
+            algorithm = Algorithm.find(algorithm_id)
+
+
+            # t.integer "algorithm_id"
+            # t.integer "programming_language_id"
+            # t.integer "user_id"
+            # t.text "error_message"
+            # t.boolean "passing"
+            # t.datetime "created_at", null: false
+            # t.datetime "updated_at", null: false
+            
+            
+            if user_id.present?
+                Attempt.create!(
+                    user_id: user_id,
+                    programming_language_id: @@language.id,
+                    algorithm_id: algorithm_id,
+                    passing: algorithm.expected_with_type === res["output"].gsub(/[\r\n]+/, ''),
+                    console_output: res["output"]
+                )
+            end
             return res
     end
 end
