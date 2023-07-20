@@ -13,6 +13,15 @@ class TraitsController < ApplicationController
     render json: @trait
   end
 
+
+  def order
+    list = params[:list]
+    puts list
+    list.each do |item|
+      Trait.find(item["id"]).update(position: item["position"])
+    end
+    render json: params[:list]
+  end
   # POST /traits
   def create
     @trait = Trait.new(trait_params)

@@ -92,9 +92,8 @@ class CodeCompiler < ApplicationRecord
             # t.datetime "created_at", null: false
             # t.datetime "updated_at", null: false
             
-            
             if user_id.present?
-                Attempt.create!(
+                res["passing"] = Attempt.create!(
                     user_id: user_id,
                     programming_language_id: @@language.id,
                     algorithm_id: algorithm_id,

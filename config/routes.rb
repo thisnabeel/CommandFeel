@@ -1,7 +1,13 @@
 Rails.application.routes.draw do
   resources :attempts
   resources :programming_language_traits
-  resources :traits
+
+  resources :traits do 
+    collection do
+      post 'order', to: 'traits#order'
+    end
+  end
+
   resources :programming_languages do
     # /programming_languages/:id
     member do
@@ -19,7 +25,13 @@ Rails.application.routes.draw do
       post 'order', to: 'algorithms#order'
     end
   end
+
   resources :quiz_choices
+
+  
+  get "/users/:user_id/algorithms/:algorithm_id/attempts" => "attempts#by_user"
+
+  
   # devise_for :users, controllers: {
   #       sessions: 'users/sessions',
   #       registrations: 'users/registrations',

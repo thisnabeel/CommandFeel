@@ -5,4 +5,5 @@ class ProgrammingLanguageTraitSerializer < ActiveModel::Serializer
   def trait
     object.trait
   end
+
 end

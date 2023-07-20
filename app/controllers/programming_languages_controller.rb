@@ -9,7 +9,7 @@ class ProgrammingLanguagesController < ApplicationController
   end
 
   def traits
-    render json: @programming_language.programming_language_traits
+    render json: @programming_language.programming_language_traits.sort_by { |pt| pt.trait.position }
   end
 
   def order

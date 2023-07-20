@@ -17,6 +17,7 @@ class Users::SessionsController < ApplicationController
     )
   end
 
+
   # POST /resource/sign_in
   def create
       user = User.find_by(email: params[:login]) || User.find_by(username: params[:login])

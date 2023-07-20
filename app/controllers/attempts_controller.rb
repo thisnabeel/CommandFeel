@@ -33,6 +33,13 @@ class AttemptsController < ApplicationController
     end
   end
 
+  def by_user
+    render json: User.find(params[:user_id]).attempts.where(
+      passing: true, 
+      algorithm_id: params[:algorithm_id]
+    )
+  end
+
   # DELETE /attempts/1
   def destroy
     @attempt.destroy
