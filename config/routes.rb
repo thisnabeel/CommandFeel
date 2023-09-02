@@ -27,11 +27,16 @@ Rails.application.routes.draw do
   end
 
   resources :quiz_choices
-
+  resources :quizzes
   
   get "/users/:user_id/algorithms/:algorithm_id/attempts" => "attempts#by_user"
 
+  post "/quizzes/batch_test" => "quizzes#batch_test"
   
+  post "/skills/generate_quiz" => "skills#generate_quiz"
+  post "/skills/generate_challenge" => "skills#generate_challenge"
+  post "/skills/generate_abstraction" => "skills#generate_abstraction"
+
   # devise_for :users, controllers: {
   #       sessions: 'users/sessions',
   #       registrations: 'users/registrations',
@@ -43,7 +48,6 @@ Rails.application.routes.draw do
   get "/programming_languages/:programming_language_id/traits/:trait_id" => "programming_language_traits#find"
 
   post "/execute_code" => "algorithms#execute_code"
-  resources :quizzes
   resources :challenges
   resources :abstractions
   resources :skills

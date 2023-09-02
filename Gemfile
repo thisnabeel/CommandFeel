@@ -7,6 +7,7 @@ ruby "3.1.4"
 gem "rails", "~> 7.0.5"
 
 gem 'devise'
+gem 'ruby-openai', '~> 4.2'
 
 # Use postgresql as the database for Active Record
 gem "pg", "~> 1.1"
