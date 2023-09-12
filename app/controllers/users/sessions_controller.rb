@@ -9,12 +9,26 @@ class Users::SessionsController < ApplicationController
   #   super
   # end
   def sign_up
-    user = User.create(user_params)
-    generated_token = user.generate_temporary_authentication_token
-    render json: user.attributes.merge(
-      :admin => user.admin?, 
-      generated_token: generated_token, 
-    )
+    user = User.find_by(email: params[:user][:email]) || User.find_by(username: params[:user][:username])
+    puts "User Present by: #{user.present?}"
+    if user.present? && user.valid_password?(params[:user][:password])
+      generated_token = user.generate_temporary_authentication_token
+      render json: user.attributes.merge(
+        :admin => user.admin?, 
+        generated_token: generated_token, 
+      )
+      # user.generate_temporary_authentication_token
+      # render json: user.as_json(only: [:id, :email, :authentication_token]), status: :created
+    else
+      user = User.create!(user_params)
+      generated_token = user.generate_temporary_authentication_token
+      render json: user.attributes.merge(
+        :admin => user.admin?, 
+        generated_token: generated_token, 
+      )
+    end
+
+
   end
 
 

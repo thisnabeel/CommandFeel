@@ -11,7 +11,11 @@ class User < ApplicationRecord
     # self.authentication_token = Devise.friendly_token
     token = Devise.friendly_token
     tokens = (self.tokens || []).push(token)
-    self.update(tokens: tokens)
+    begin
+      self.update(tokens: tokens)
+    rescue => exception
+      puts exception
+    end
     return token
   end
 
