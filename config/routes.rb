@@ -21,6 +21,8 @@ Rails.application.routes.draw do
     end
   end
 
+  get "/programming_languages/:id/starters" => "language_algorithm_starters#by_language"
+
   resources :algorithms do
     collection do
       post 'order', to: 'algorithms#order'

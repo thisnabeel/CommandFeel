@@ -8,6 +8,11 @@ class LanguageAlgorithmStartersController < ApplicationController
     render json: @language_algorithm_starters, each_serializer: LanguageAlgorithmStarterSerializer
   end
 
+  def by_language
+    @language_algorithm_starters = LanguageAlgorithmStarter.where(programming_language_id: params[:id])
+    render json: @language_algorithm_starters, each_serializer: LanguageAlgorithmStarterSerializer
+  end
+
   def finder
     @language_algorithm_starter = LanguageAlgorithmStarter.find_by(programming_language_id: params[:language_id], algorithm_id: params[:algorithm_id])
     render json: @language_algorithm_starter
