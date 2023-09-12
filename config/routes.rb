@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :language_algorithm_starters
   resources :attempts
   resources :programming_language_traits
 
@@ -26,6 +27,8 @@ Rails.application.routes.draw do
     end
   end
 
+
+  get "/language_algorithm_starters/finder/:language_id/:algorithm_id" => "language_algorithm_starters#finder"
   resources :quiz_choices
   resources :quizzes
   

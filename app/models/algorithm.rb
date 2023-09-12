@@ -1,5 +1,7 @@
 class Algorithm < ApplicationRecord
 
+    has_many :language_algorithm_starters
+
     def expected_with_type
         x = self.expected
         if !x.present? || x === ""

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_07_05_023224) do
+ActiveRecord::Schema[7.0].define(version: 2023_09_11_074146) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "timescaledb"
@@ -70,6 +70,16 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_05_023224) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["chapter_id"], name: "index_chapters_on_chapter_id"
+  end
+
+  create_table "language_algorithm_starters", force: :cascade do |t|
+    t.integer "programming_language_id"
+    t.integer "algorithm_id"
+    t.text "code"
+    t.json "code_lines"
+    t.string "video_url"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "programming_language_traits", force: :cascade do |t|

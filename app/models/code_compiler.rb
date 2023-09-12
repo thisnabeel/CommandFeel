@@ -6,7 +6,7 @@ class CodeCompiler < ApplicationRecord
         @@options = options
         @@language = ProgrammingLanguage.find(options[:programming_language_id])
         slug = @@language.editor_slug
-        User.find(@@options[:user_id])
+        # @@user = User.find(@@options[:user_id])
 
         if ["ruby"].include? slug
             return jdoodle("ruby", 0)
@@ -100,6 +100,14 @@ class CodeCompiler < ApplicationRecord
                     passing: algorithm.expected_with_type === res["output"].gsub(/[\r\n]+/, ''),
                     console_output: res["output"]
                 )
+            else
+                res["passing"] = {
+                    # user_id: user_id,
+                    programming_language_id: @@language.id,
+                    algorithm_id: algorithm_id,
+                    passing: algorithm.expected_with_type === res["output"].gsub(/[\r\n]+/, ''),
+                    console_output: res["output"]
+                }
             end
             return res
     end

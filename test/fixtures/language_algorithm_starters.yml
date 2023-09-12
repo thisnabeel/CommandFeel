@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  language_id: 1
+  algorithm_id: 1
+  code: MyText
+  code_lines: MyText
+  video_url: MyString
+
+two:
+  language_id: 1
+  algorithm_id: 1
+  code: MyText
+  code_lines: MyText
+  video_url: MyString
