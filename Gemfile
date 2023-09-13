@@ -18,7 +18,8 @@ gem 'httparty'
 
 gem 'figaro'
 # Use the Puma web server [https://github.com/puma/puma]
-gem "puma", "~> 5.0"
+# gem "puma", "~> 5.0"
+gem "puma", ">= 5.6.7"
 gem "active_model_serializers" 
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 # gem "jbuilder"
