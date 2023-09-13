@@ -41,7 +41,7 @@ class CodeCompiler < ApplicationRecord
         end
 
         if ["kotlin"].include? slug
-            return jdoodle("kotlin", 1)
+            return jdoodle("kotlin", 3)
         end
 
         if ["rust"].include? slug
