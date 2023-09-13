@@ -6,7 +6,6 @@ class CodeCompiler < ApplicationRecord
         @@options = options
         @@language = ProgrammingLanguage.find(options[:programming_language_id])
         slug = @@language.editor_slug
-        # @@user = User.find(@@options[:user_id])
 
         if ["ruby"].include? slug
             return jdoodle("ruby", 0)
