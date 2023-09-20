@@ -5,6 +5,7 @@ class ControlPanelController < ApplicationController
     end
 
     def empty_quizzes
-        render json: []
+        quizzes = Quiz.joins(:quiz_choices).where(quiz_choices: { body: 'untitled' })
+        render json: quizzes
     end
 end

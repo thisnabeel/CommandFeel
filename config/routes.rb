@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :user_quiz_statuses
   resources :language_algorithm_starters
   resources :attempts
   resources :programming_language_traits
