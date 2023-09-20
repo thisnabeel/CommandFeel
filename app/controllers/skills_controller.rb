@@ -18,7 +18,7 @@ class SkillsController < ApplicationController
   end
   
   def generate_quiz
-    render json: @skill.generate_quiz, serializer: QuizSerializer
+    render json: @skill.generate_quiz(params), serializer: QuizSerializer
   end
   
   def generate_challenge

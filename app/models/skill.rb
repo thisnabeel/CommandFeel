@@ -39,12 +39,23 @@ class Skill < ApplicationRecord
 		return self.all_children_with_quizzes.flat_map(&:quizzes).uniq.shuffle
 	end
 
-	def generate_quiz
+	def generate_quiz(params)
 
-		prompt = "
-			give me 1 question & answer that proves I understand '#{self.title}'.
-			Make sure it's different from the questions: #{self.quizzes.pluck(:question).join(", ") }.
-return json format: {question:, answer:}"
+		case params[:category]
+		when "jeopardy"
+			prompt = "
+				give me jeopardy question for the tech concept of '#{self.title}'
+	return json format: {question:, answer: '#{self.title}'}"
+			
+		else
+			prompt = "
+				give me 1 question & answer that proves I understand '#{self.title}'.
+				Make sure it's different from the questions: #{self.quizzes.pluck(:question).join(", ") }.
+	return json format: {question:, answer:}"
+			
+		end
+
+
 		res = ChatGpt.send(prompt)
 		quiz = Quiz.create(
 			quizable_type: "Skill",

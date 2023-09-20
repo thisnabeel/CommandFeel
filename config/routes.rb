@@ -21,6 +21,9 @@ Rails.application.routes.draw do
     end
   end
 
+  get "/control_panel/empty_abstractions" => "control_panel#empty_abstractions"
+  get "/control_panel/empty_quizzes" => "control_panel#empty_quizzes"
+
   get "/programming_languages/:id/starters" => "language_algorithm_starters#by_language"
 
   resources :algorithms do
