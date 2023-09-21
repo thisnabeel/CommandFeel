@@ -13,6 +13,18 @@ class UserQuizStatusesController < ApplicationController
     render json: @user_quiz_status
   end
 
+  def by_user
+    user = User.includes(:user_quiz_statuses).find(params[:id])
+    grouped_statuses = user.user_quiz_statuses.group_by { |el| el.status }
+    serialized_statuses = {}
+
+    grouped_statuses.each do |status, statuses|
+      serialized_statuses[status] = statuses.map { |el| UserQuizStatusSerializer.new(el) }
+    end
+
+    render json: serialized_statuses
+  end
+
   # POST /user_quiz_statuses
   def create
     @user_quiz_status = UserQuizStatus.find_or_create_by(user_id: user_quiz_status_params[:user_id], quiz_id: user_quiz_status_params[:quiz_id])

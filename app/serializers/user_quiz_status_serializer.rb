@@ -1,5 +1,8 @@
 class UserQuizStatusSerializer < ActiveModel::Serializer
-  attributes :id, :status
-  has_one :user
-  has_one :quiz
+  attributes :id, :status, :quiz, :quiz_id
+
+  def quiz
+    QuizSerializer.new(object.quiz)
+  end
+
 end
