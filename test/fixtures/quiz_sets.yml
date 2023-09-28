@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  quiz_setable_id: 1
+  quiz_setable_type: MyString
+  position: 1
+  title: MyString
+  description: MyText
+  pop_quizable: false
+
+two:
+  quiz_setable_id: 1
+  quiz_setable_type: MyString
+  position: 1
+  title: MyString
+  description: MyText
+  pop_quizable: false

@@ -4,7 +4,8 @@ class SkillSerializer < ActiveModel::Serializer
 
   attributes :abstractions
   attributes :challenges
-  attributes :quizzes
+  # attributes :quizzes
+  attributes :quiz_sets
 
 
   def options
@@ -29,10 +30,19 @@ class SkillSerializer < ActiveModel::Serializer
   end
 
 
-  def quizzes
-    if options && options[:quizzes] === true
-      return ActiveModel::Serializer::CollectionSerializer.new(@object.quizzes, serializer: QuizSerializer)
+  # def quizzes
+  #   if options && options[:quizzes] === true
+  #     return ActiveModel::Serializer::CollectionSerializer.new(@object.quizzes, serializer: QuizSerializer)
 
+  #   else
+  #     return []
+  #   end
+  # end
+
+
+  def quiz_sets
+    if options && options[:quizzes] === true
+      return ActiveModel::Serializer::CollectionSerializer.new(@object.quiz_sets, serializer: QuizSetSerializer)
     else
       return []
     end

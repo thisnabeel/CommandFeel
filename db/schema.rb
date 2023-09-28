@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_09_20_185936) do
+ActiveRecord::Schema[7.0].define(version: 2023_09_26_105436) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "timescaledb"
@@ -108,6 +108,17 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_20_185936) do
     t.index ["quiz_id"], name: "index_quiz_choices_on_quiz_id"
   end
 
+  create_table "quiz_sets", force: :cascade do |t|
+    t.integer "quiz_setable_id"
+    t.string "quiz_setable_type"
+    t.integer "position"
+    t.string "title"
+    t.text "description"
+    t.boolean "pop_quizable"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "quizzes", force: :cascade do |t|
     t.string "quizable_type"
     t.integer "quizable_id"
@@ -116,6 +127,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_20_185936) do
     t.integer "position"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "quiz_set_id"
   end
 
   create_table "skills", force: :cascade do |t|
