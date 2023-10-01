@@ -50,6 +50,6 @@ class QuizzesController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def quiz_params
-      params.require(:quiz).permit(:quizable_type, :quizable_id, :jeopardy, :question, :position)
+      params.require(:quiz).permit(:quizable_type, :quizable_id, :jeopardy, :question, :position, :quiz_set_id)
     end
 end
