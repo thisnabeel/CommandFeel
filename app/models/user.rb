@@ -7,6 +7,7 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable, authentication_keys: [:login]
   has_many :attempts
   has_many :user_quiz_statuses
+  has_many :saved_jobs
 
   def generate_temporary_authentication_token
     # self.authentication_token = Devise.friendly_token

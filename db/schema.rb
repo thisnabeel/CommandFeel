@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_09_26_105436) do
+ActiveRecord::Schema[7.0].define(version: 2023_10_02_082839) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "timescaledb"
@@ -128,6 +128,19 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_26_105436) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "quiz_set_id"
+  end
+
+  create_table "saved_jobs", force: :cascade do |t|
+    t.string "title"
+    t.string "company"
+    t.integer "position"
+    t.string "jd_link"
+    t.text "jd"
+    t.string "stage"
+    t.text "skills"
+    t.integer "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "skills", force: :cascade do |t|

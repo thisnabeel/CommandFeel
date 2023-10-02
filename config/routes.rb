@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :saved_jobs
   resources :quiz_sets
   resources :user_quiz_statuses
   resources :language_algorithm_starters
@@ -27,6 +28,7 @@ Rails.application.routes.draw do
   get "/control_panel/empty_quizzes" => "control_panel#empty_quizzes"
 
   get "/users/:id/user_quiz_statuses" => "user_quiz_statuses#by_user"
+  get "/users/:id/jobs" => "saved_jobs#by_user"
 
   get "/programming_languages/:id/starters" => "language_algorithm_starters#by_language"
 
