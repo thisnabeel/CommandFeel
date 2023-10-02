@@ -1,5 +1,5 @@
 class SavedJobsController < ApplicationController
-  before_action :set_saved_job, only: %i[ show update destroy ]
+  before_action :set_saved_job, only: %i[ show update destroy find_skills]
 
   # GET /saved_jobs
   def index
@@ -11,6 +11,10 @@ class SavedJobsController < ApplicationController
   # GET /saved_jobs/1
   def show
     render json: @saved_job
+  end
+  
+  def find_skills
+    render json: @saved_job.find_skills
   end
 
   def by_user

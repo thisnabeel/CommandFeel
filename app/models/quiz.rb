@@ -7,7 +7,7 @@ class Quiz < ApplicationRecord
     skills = Skill.find(list.map {|l| l["id"]})
     quizzes = []
     skills.each {|s| quizzes = quizzes + s.all_quizzes}
-    return quizzes
+    return quizzes.shuffle.first(5)
   end
 
 end
