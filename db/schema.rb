@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_10_02_082839) do
+ActiveRecord::Schema[7.0].define(version: 2023_10_04_210817) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "timescaledb"
@@ -94,6 +94,25 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_02_082839) do
     t.string "title"
     t.integer "position"
     t.string "editor_slug"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "proof_links", force: :cascade do |t|
+    t.integer "proof_id"
+    t.string "url"
+    t.string "title"
+    t.text "description"
+    t.integer "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "proofs", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "challenge_id"
+    t.string "title"
+    t.text "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

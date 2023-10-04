@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  resources :proof_links
+  resources :proofs
   resources :saved_jobs
   resources :quiz_sets
   resources :user_quiz_statuses
@@ -23,6 +25,8 @@ Rails.application.routes.draw do
       post 'order', to: 'programming_languages#order'
     end
   end
+
+  post "/proofs/find" => "proofs#find"
 
   get "/control_panel/empty_abstractions" => "control_panel#empty_abstractions"
   get "/control_panel/empty_quizzes" => "control_panel#empty_quizzes"

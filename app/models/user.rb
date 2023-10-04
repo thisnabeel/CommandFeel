@@ -8,6 +8,8 @@ class User < ApplicationRecord
   has_many :attempts
   has_many :user_quiz_statuses
   has_many :saved_jobs
+  has_many :proofs
+  has_many :proof_links
 
   def generate_temporary_authentication_token
     # self.authentication_token = Devise.friendly_token
