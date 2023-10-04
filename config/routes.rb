@@ -31,7 +31,7 @@ Rails.application.routes.draw do
   get "/users/:id/jobs" => "saved_jobs#by_user"
 
   get "/saved_jobs/:id/find_skills" => "saved_jobs#find_skills"
-  
+  post "/quizzes/generate_choices" => "quizzes#generate_choices"
   get "/programming_languages/:id/starters" => "language_algorithm_starters#by_language"
 
   resources :algorithms do

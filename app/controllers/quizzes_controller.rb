@@ -17,6 +17,10 @@ class QuizzesController < ApplicationController
     render json: Quiz.batch_test(params[:skills])
   end
 
+  def generate_choices
+    render json: Quiz.find(params[:quiz_id]).generate_choices(params[:style])
+  end
+
   # POST /quizzes
   def create
     @quiz = Quiz.new(quiz_params)
