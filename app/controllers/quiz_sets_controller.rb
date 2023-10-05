@@ -16,7 +16,7 @@ class QuizSetsController < ApplicationController
   # POST /quiz_sets
   def create
     @quiz_set = QuizSet.new(quiz_set_params)
-
+    
     if @quiz_set.save
       render json: @quiz_set, serializer: QuizSetSerializer, status: :created, location: @quiz_set
     else

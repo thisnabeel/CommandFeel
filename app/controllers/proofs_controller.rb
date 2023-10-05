@@ -17,16 +17,15 @@ class ProofsController < ApplicationController
   end
 
   def find
-    challenge = Challenge.find(params[:challenge_id])
-    user = User.find(params[:user_id])
+    params[:challenge_id] ? challenge = Challenge.find(params[:challenge_id]) : challenge = nil
+    params[:user_id] ? user = User.find(params[:user_id]) : user = nil
 
-    if challenge && user
-      proofs = Challenge.find(params[:challenge_id]).proofs.where(user_id: params[:user_id])
-    elsif challenge
-      proofs = Challenge.find(params[:challenge_id]).proofs
-    elsif user
-      proofs = User.proofs
-    end
+    proofs = if challenge.present?
+              user.present? ? challenge.proofs.where(user_id: params[:user_id]) : challenge.proofs
+            elsif user.present?
+              user.proofs
+            end
+
 
     render json: proofs, each_serializer: ProofSerializer
   end
