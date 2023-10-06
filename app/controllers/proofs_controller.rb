@@ -19,6 +19,8 @@ class ProofsController < ApplicationController
   def find
     params[:challenge_id] ? challenge = Challenge.find(params[:challenge_id]) : challenge = nil
     params[:user_id] ? user = User.find(params[:user_id]) : user = nil
+    params[:username] ? user = User.find_by(username: params[:username]) : user = user
+    
 
     proofs = if challenge.present?
               user.present? ? challenge.proofs.where(user_id: params[:user_id]) : challenge.proofs
