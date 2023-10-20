@@ -21,15 +21,19 @@ class ProofsController < ApplicationController
     params[:user_id] ? user = User.find(params[:user_id]) : user = nil
     params[:username] ? user = User.find_by(username: params[:username]) : user = user
     
+    json = {}
+    projects = nil
 
-    proofs = if challenge.present?
-              user.present? ? challenge.proofs.where(user_id: params[:user_id]) : challenge.proofs
-            elsif user.present?
-              user.proofs
-            end
-
-
-    render json: proofs, each_serializer: ProofSerializer
+    if challenge.present?
+      proofs = user.present? ? challenge.proofs.where(user_id: params[:user_id]) : challenge.proofs
+    elsif user.present?
+      proofs = user.proofs
+      projects = user.projects
+    end
+    json[:proofs] = proofs.map{|proof| ProofSerializer.new(proof)}
+    json[:projects] = projects.map{|project| ProjectSerializer.new(project)}
+      
+    render json: json
   end
 
   # GET /proofs/1

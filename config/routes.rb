@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  resources :project_skills
+  resources :projects
   resources :proof_links
   resources :proofs
   resources :saved_jobs

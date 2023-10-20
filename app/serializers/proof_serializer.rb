@@ -3,6 +3,10 @@ class ProofSerializer < ActiveModel::Serializer
   has_many :proof_links
   # has_one :challenge
   def challenge
-    ChallengeSerializer.new(object.challenge)
+    if object.proofable_type === "Challenge"
+      ChallengeSerializer.new(object.proofable)
+    else
+      nil
+    end
   end
 end
