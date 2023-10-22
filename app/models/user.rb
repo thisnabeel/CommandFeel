@@ -61,4 +61,70 @@ class User < ApplicationRecord
   def login
     @login || self.username || self.email
   end
+
+  # Avatar
+  def upload_avatar(params)
+    # require 'aws-sdk'
+
+    user = self
+    avatar_original = params[:avatar_original]
+    avatar_cropped = params[:avatar_cropped]
+
+    # return avatar_cropped
+    # user.update(avatar_original_url: upload_aws(user, "original", avatar_cropped))
+    if avatar_original.present?
+      user.update(avatar_source_url: upload_aws(user, "original", avatar_original))
+    end
+    user.update(avatar_cropped_url: upload_aws(user, "cropped", avatar_cropped))
+    return user
+  end
+
+  def upload_aws(user, key, file)
+    s3 = Aws::S3::Resource.new
+    file_name = key + ".jpeg"
+    obj = s3.bucket('commandfeel').object("users/#{user.id}/avatar/#{key}/#{file_name}")
+    puts "Uploading file #{file_name}"
+    obj.upload_file(file, acl:'public-read')
+    return obj.public_url
+  end
+
+  def delete_note
+    require 'aws-sdk'
+
+    title = params[:title]
+    word_type = params[:type]
+    id = params[:id]
+    url = params[:url]
+    word = word_type.constantize.find(id)
+
+    key = url.split("amazonaws.com/")[1]
+    puts key
+
+    s3 = Aws::S3::Resource.new
+
+    # reference an existing bucket by name
+    bucket = s3.bucket('commandfeel')
+    # bucket.objects.each do |obj|
+    #   puts "#{obj.key} => #{obj.etag}"
+    # end
+
+    # single object operations
+    obj = bucket.object(key)
+    puts obj.exists?
+    if obj.delete
+      puts "deleted!"
+      hash = word.recordings
+      hash.delete(title)
+      word.update(recordings: hash)
+    end
+
+    render json: {
+      status: 200,
+      message: "Destroyed!",
+    }.to_json
+
+    rescue => e
+      Rails.logger.error "Failure with S3 call. Details: #{e}; #{e.backtrace}"
+      return false
+  end
 end

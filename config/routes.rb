@@ -30,6 +30,9 @@ Rails.application.routes.draw do
 
   post "/proofs/find" => "proofs#find"
 
+  post "/upload_avatar" => "users#upload_avatar"
+  post "/users/find_by_username" => "users#find_by_username"
+
   get "/control_panel/empty_abstractions" => "control_panel#empty_abstractions"
   get "/control_panel/empty_quizzes" => "control_panel#empty_quizzes"
 
