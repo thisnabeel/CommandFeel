@@ -8,6 +8,6 @@ class AlgorithmSerializer < ActiveModel::Serializer
   end
 
   def language_algorithm_starters
-    object.language_algorithm_starters
+    object.language_algorithm_starters.map {|obj| LanguageAlgorithmStarterSerializer.new(obj)}
   end
 end

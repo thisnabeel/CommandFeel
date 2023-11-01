@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_10_22_142624) do
+ActiveRecord::Schema[7.0].define(version: 2023_10_27_015127) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "timescaledb"
@@ -36,6 +36,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_22_142624) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "position", default: 1
+    t.integer "algorithm_id"
+    t.boolean "self_explanatory"
   end
 
   create_table "attempts", force: :cascade do |t|
@@ -197,6 +199,15 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_22_142624) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["skill_id"], name: "index_skills_on_skill_id"
+  end
+
+  create_table "test_cases", force: :cascade do |t|
+    t.integer "language_algorithm_starter_id"
+    t.text "code"
+    t.text "expectation"
+    t.integer "position"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "traits", force: :cascade do |t|

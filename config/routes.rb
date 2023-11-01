@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :test_cases
   resources :project_skills
   resources :projects
   resources :proof_links
@@ -42,6 +43,8 @@ Rails.application.routes.draw do
   get "/saved_jobs/:id/find_skills" => "saved_jobs#find_skills"
   post "/quizzes/generate_choices" => "quizzes#generate_choices"
   get "/programming_languages/:id/starters" => "language_algorithm_starters#by_language"
+
+  post "/test_cases/:id/execute" => "test_cases#execute"
 
   resources :algorithms do
     collection do

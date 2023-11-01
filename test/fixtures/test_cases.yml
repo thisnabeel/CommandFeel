@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  language_algorithm_starter_id: 1
+  code: MyText
+  expectation: MyText
+  position: 1
+
+two:
+  language_algorithm_starter_id: 1
+  code: MyText
+  expectation: MyText
+  position: 1

@@ -3,6 +3,8 @@ class CodeCompiler < ApplicationRecord
     
     def self.run(options)
 
+        puts options
+
         @@options = options
         @@language = ProgrammingLanguage.find(options[:programming_language_id])
         slug = @@language.editor_slug
@@ -104,8 +106,9 @@ class CodeCompiler < ApplicationRecord
                     # user_id: user_id,
                     programming_language_id: @@language.id,
                     algorithm_id: algorithm_id,
-                    passing: algorithm.expected_with_type === res["output"].gsub(/[\r\n]+/, ''),
-                    console_output: res["output"]
+                    passing: @@options[:expectation] === res["output"].gsub(/[\r\n]+/, ''),
+                    console_output: res["output"],
+                    expected: @@options[:expectation]
                 }
             end
             return res
