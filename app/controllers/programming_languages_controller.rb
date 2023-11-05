@@ -5,7 +5,7 @@ class ProgrammingLanguagesController < ApplicationController
   def index
     @programming_languages = ProgrammingLanguage.all.order("position ASC")
 
-    render json: @programming_languages
+    render json: @programming_languages, each_serializer: ProgrammingLanguageSerializer, algorithms: false
   end
 
   def traits

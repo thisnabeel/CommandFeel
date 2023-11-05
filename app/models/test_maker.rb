@@ -4,6 +4,10 @@ class TestMaker < ApplicationRecord
         test_case["inputs"].each do |item|
             lines.push(convert(item, language))
         end
+        puts "_________"
+        puts language
+        puts lines.join("\n")
+        puts "~~~~~~~~"
         return lines.join("\n")
         # take an algortihm
         # each algo test case
@@ -21,6 +25,22 @@ class TestMaker < ApplicationRecord
             return "#{input[0]} = #{input[1]}"
         when "javascript"
             return "let #{input[0]} = #{input[1]}"
+        when "c++"
+            prefix = ""
+            if input[1].include? '"'
+                prefix = "std::string"
+            else
+                prefix = "int"
+            end
+            return "#{prefix} #{input[0]} = #{input[1]};"
+        when "c#"
+            prefix = ""
+            if input[1].include? '"'
+                prefix = "string"
+            else
+                prefix = "int"
+            end
+            return "#{prefix} #{input[0]} = #{input[1]};"
         else
         end
     end
