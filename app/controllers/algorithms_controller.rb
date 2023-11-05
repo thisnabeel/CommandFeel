@@ -10,7 +10,7 @@ class AlgorithmsController < ApplicationController
 
   # GET /algorithms/1
   def show
-    render json: @algorithm
+    render json: @algorithm, serializer: AlgorithmSerializer, include: 'language_algorithm_starters'
   end
 
   def execute_code
