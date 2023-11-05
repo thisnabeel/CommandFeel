@@ -52,6 +52,21 @@ class AlgorithmsController < ApplicationController
     @algorithm.destroy
   end
 
+  def execute
+    lang = params[:language][:title].downcase
+    test_case = params[:test_case]
+    made = TestMaker.call(lang, test_case)
+    code = params[:code].gsub("~~", made)
+    puts code
+    render json: CodeCompiler.run({
+            code: code,
+            algorithm_id: params[:algorithm_id],
+            programming_language_id: params[:language][:id],
+            user_save: false,
+            expectation: test_case[:expectation]
+        })
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_algorithm
@@ -60,6 +75,6 @@ class AlgorithmsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def algorithm_params
-      params.require(:algorithm).permit(:title, :description, :expected, :difficulty)
+      params.require(:algorithm).permit!
     end
 end

@@ -102,11 +102,15 @@ class CodeCompiler < ApplicationRecord
                     console_output: res["output"]
                 )
             else
+                puts "EXPECTATION:"
+                puts @@options[:expectation]
+                puts "RESULT:"
+                puts res["output"].gsub("\n", ' ').strip
                 res["passing"] = {
                     # user_id: user_id,
                     programming_language_id: @@language.id,
                     algorithm_id: algorithm_id,
-                    passing: @@options[:expectation] === res["output"].gsub(/[\r\n]+/, ''),
+                    passing: @@options[:expectation] === res["output"].gsub("\n", ' ').strip,
                     console_output: res["output"],
                     expected: @@options[:expectation]
                 }

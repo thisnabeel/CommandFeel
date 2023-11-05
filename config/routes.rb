@@ -44,7 +44,7 @@ Rails.application.routes.draw do
   post "/quizzes/generate_choices" => "quizzes#generate_choices"
   get "/programming_languages/:id/starters" => "language_algorithm_starters#by_language"
 
-  post "/test_cases/:id/execute" => "test_cases#execute"
+  post "/algorithms/:id/execute" => "algorithms#execute"
 
   resources :algorithms do
     collection do

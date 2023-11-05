@@ -1,5 +1,6 @@
 class TestCase < ApplicationRecord
-    belongs_to :language_algorithm_starter
+    belongs_to :language_algorithm_starter, optional: true
+    belongs_to :algorithm
 
     def execute_code(code)
 
@@ -29,22 +30,22 @@ class TestCase < ApplicationRecord
 
     def expected_with_type
         x = self.expectation
-        if !x.present? || x === ""
-            return nil
-        end
+        # if !x.present? || x === ""
+        #     return nil
+        # end
 
-        if x.starts_with? "STRING"
-            return x.split("STRING ")[1]
-        end
+        # if x.starts_with? "STRING"
+        #     return x.split("STRING ")[1]
+        # end
 
-        if x.starts_with? "INT"
-            return x.split("INT ")[1]
-        end
+        # if x.starts_with? "INT"
+        #     return x.split("INT ")[1]
+        # end
 
-        if x.starts_with? "BOOLEAN"
-            return x.split("BOOLEAN ")[1]
-        end
+        # if x.starts_with? "BOOLEAN"
+        #     return x.split("BOOLEAN ")[1]
+        # end
 
-        return nil
+        return x
     end
 end

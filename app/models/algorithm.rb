@@ -1,6 +1,9 @@
 class Algorithm < ApplicationRecord
 
     has_many :language_algorithm_starters
+    # has_many :test_cases
+    # serialize :input_params
+    # serialize :test_cases
 
     def expected_with_type
         x = self.expected

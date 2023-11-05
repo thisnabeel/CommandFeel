@@ -50,6 +50,6 @@ class TestCasesController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def test_case_params
-      params.require(:test_case).permit(:language_algorithm_starter_id, :code, :expectation, :position)
+      params.require(:test_case).permit(:language_algorithm_starter_id, :algorithm_id, :code, :expectation, :position)
     end
 end
