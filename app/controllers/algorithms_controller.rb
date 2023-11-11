@@ -5,12 +5,12 @@ class AlgorithmsController < ApplicationController
   def index
     @algorithms = Algorithm.all.order("position ASC")
 
-    render json: @algorithms
+    render json: @algorithms, each_serializer: AlgorithmSerializer
   end
 
   # GET /algorithms/1
   def show
-    render json: @algorithm, serializer: AlgorithmSerializer, include: 'language_algorithm_starters'
+    render json: @algorithm, serializer: AlgorithmSerializer, language_algorithm_starters: true, include: 'language_algorithm_starters'
   end
 
   def execute_code
@@ -28,6 +28,21 @@ class AlgorithmsController < ApplicationController
     end
   end
 
+  def reorder
+    algorithm_updates = params[:list].map do |l|
+      {
+        id: l["id"].to_i,
+        position: l["position"].to_i,
+        algorithm_id: l["algorithm_id"].to_i > 0 ? l["algorithm_id"].to_i : nil
+      }
+    end
+
+    Algorithm.upsert_all(algorithm_updates)
+
+    render status: 200, json: {
+      message: "Success!",
+    }.to_json
+  end
 
   def order
     list = params[:list]

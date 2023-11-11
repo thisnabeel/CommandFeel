@@ -23,7 +23,7 @@ class ProgrammingLanguagesController < ApplicationController
 
   # GET /programming_languages/1
   def show
-    render json: @programming_language
+    render json: @programming_language, serializer: ProgrammingLanguageSerializer, algorithms: true
   end
 
   # POST /programming_languages

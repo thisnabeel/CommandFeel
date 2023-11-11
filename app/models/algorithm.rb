@@ -1,6 +1,8 @@
 class Algorithm < ApplicationRecord
 
     has_many :language_algorithm_starters
+    has_many :algorithms
+    belongs_to :algorithm, optional: true
     # has_many :test_cases
     # serialize :input_params
     # serialize :test_cases

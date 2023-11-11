@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_11_04_222808) do
+ActiveRecord::Schema[7.0].define(version: 2023_11_10_061334) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "timescaledb"
@@ -40,6 +40,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_04_222808) do
     t.boolean "self_explanatory"
     t.json "input_params", default: []
     t.json "test_cases", default: []
+    t.text "challenge_body", default: ""
+    t.boolean "header", default: false
   end
 
   create_table "attempts", force: :cascade do |t|

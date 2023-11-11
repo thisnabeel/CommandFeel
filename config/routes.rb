@@ -45,6 +45,7 @@ Rails.application.routes.draw do
   get "/programming_languages/:id/starters" => "language_algorithm_starters#by_language"
 
   post "/algorithms/:id/execute" => "algorithms#execute"
+  put '/algorithms/reorder' => "algorithms#reorder"
 
   resources :algorithms do
     collection do

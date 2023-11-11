@@ -4,7 +4,7 @@ class ProgrammingLanguageSerializer < ActiveModel::Serializer
 
   def include_algorithms?
     # Check if algorithms should be included based on the request
-    @instance_options[:algorithms] || true
+    @instance_options[:algorithms]
   end
 
   def algorithms
