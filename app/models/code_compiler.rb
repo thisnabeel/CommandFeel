@@ -82,7 +82,7 @@ class CodeCompiler < ApplicationRecord
 
             user_id = @@options[:user_id]
             algorithm_id =  @@options[:algorithm_id]
-            algorithm = Algorithm.find(algorithm_id)
+            @@algorithm = Algorithm.find(algorithm_id)
 
 
             # t.integer "algorithm_id"
@@ -92,13 +92,15 @@ class CodeCompiler < ApplicationRecord
             # t.boolean "passing"
             # t.datetime "created_at", null: false
             # t.datetime "updated_at", null: false
+
+            passing = check_passing(res["output"])
             
             if user_id.present?
                 res["passing"] = Attempt.create!(
                     user_id: user_id,
                     programming_language_id: @@language.id,
                     algorithm_id: algorithm_id,
-                    passing: algorithm.expected_with_type === res["output"].gsub(/[\r\n]+/, ''),
+                    passing: passing,
                     console_output: res["output"]
                 )
             else
@@ -110,12 +112,39 @@ class CodeCompiler < ApplicationRecord
                     # user_id: user_id,
                     programming_language_id: @@language.id,
                     algorithm_id: algorithm_id,
-                    passing: @@options[:expectation] === res["output"].gsub("\n", ' ').strip,
+                    passing: passing,
                     console_output: res["output"],
                     expected: @@options[:expectation]
                 }
             end
             return res
+    end
+
+    def self.check_passing(output)
+
+        if @@options[:data_type].present?
+                case @@options[:data_type]
+                when "array"
+                    output_string = output.gsub("\n", ' ').strip
+                    if output_string.starts_with? "["
+                        output_array = output_string.scan(/['"](.*?)['"]/).flatten
+                    else
+                        output_array =  output_string.split(/\s+/)
+                    end
+                    
+                    expectation_string = @@options[:expectation].strip
+                    expectation_array = expectation_string.scan(/['"](.*?)['"]/).flatten
+
+                    result = output_array.sort == expectation_array.sort
+
+                    return result
+                else
+                    return
+                end
+
+        end
+        
+        return @@options[:expectation] === output.gsub("\n", ' ').strip
     end
 end
 

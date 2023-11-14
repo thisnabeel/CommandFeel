@@ -78,7 +78,8 @@ class AlgorithmsController < ApplicationController
             algorithm_id: params[:algorithm_id],
             programming_language_id: params[:language][:id],
             user_save: false,
-            expectation: test_case[:expectation]
+            expectation: test_case[:expectation],
+            data_type: test_case[:data_type].present? ? test_case[:data_type] : nil
         })
   end
 

@@ -71,6 +71,10 @@ class Skill < ApplicationRecord
 			prompt = "multiple choice question for: #{self.title} using real life abstractions in a real-life scenario like 'Imagine you are ...'. return json format: {question:, choices:, answer:}"
 		when "steps"
 			prompt = "Give me choices and correct answer for: '#{params[:prompt]} using #{self.title}'. Question should start with 'What are the steps for...', Choice should be unnumbered and unlettered. Give me json format: {question:, choices:, answer:}"
+		when "scenario"
+			prompt = "Give me a scenario where #{self.title} is the answer. Pose it as “You are…” as a question without mentioning the answer at all. return json format: {question:, answer:}"
+		when "scenario_mc"
+			prompt = "Give me a scenario where #{self.title} is the answer. Pose it as “You are…” as a question without mentioning the answer at all. Give me 4 choices, only one of them being the answer. return json format:  {question:, choices:, answer:}"
 		else
 			if params[:prompt].length > 2
 			prompt = "give me 1 question regarding #{params[:prompt]}, that proves I understand #{self.title}. return json format: {question:, answer:}"
