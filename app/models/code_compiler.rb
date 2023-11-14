@@ -138,6 +138,10 @@ class CodeCompiler < ApplicationRecord
                     result = output_array.sort == expectation_array.sort
 
                     return result
+                when "string"
+                    return @@options[:expectation] === output.gsub("\n", ' ').strip
+                when "integer"
+                    return @@options[:expectation].to_i === output.gsub("\n", ' ').strip.to_i
                 else
                     return
                 end
