@@ -43,13 +43,12 @@ class TestMaker < ApplicationRecord
             return "#{prefix} #{input[0]} = #{input[1]};"
         when "java"
             prefix = ""
-            if input[1].include? '"' || input[1].include? "'"
+            if input[1].include?('"') || input[1].include?("'")
                 prefix = "string"
             else
                 prefix = "int"
             end
             return "#{prefix} #{input[0]} = #{input[1]};"
-        else
         end
     end
 end
