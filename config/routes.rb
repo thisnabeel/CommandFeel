@@ -47,18 +47,20 @@ Rails.application.routes.draw do
   post "/algorithms/:id/execute" => "algorithms#execute"
   put '/algorithms/reorder' => "algorithms#reorder"
 
+  
   resources :algorithms do
     collection do
       post 'order', to: 'algorithms#order'
     end
   end
-
-
+  
+  
   get "/language_algorithm_starters/finder/:language_id/:algorithm_id" => "language_algorithm_starters#finder"
   resources :quiz_choices
   resources :quizzes
   
-  get "/users/:user_id/algorithms/:algorithm_id/attempts" => "attempts#by_user"
+  get "/users/:user_id/algorithms/:algorithm_id/attempts" => "attempts#by_user_algorithm"
+  get "/users/:user_id/languages/:programming_language_id/attempts" => "attempts#by_user_language"
 
   post "/quizzes/batch_test" => "quizzes#batch_test"
   
