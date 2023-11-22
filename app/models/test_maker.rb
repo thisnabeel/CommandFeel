@@ -56,7 +56,7 @@ class TestMaker < ApplicationRecord
             else
                 prefix = "int"
             end
-            return "var #{prefix} #{input[0]} = #{input[1]}"
+            return "#{input[0]} := #{input[1]}"
         end
     end
 end
