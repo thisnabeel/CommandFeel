@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_11_10_061334) do
+ActiveRecord::Schema[7.0].define(version: 2023_11_23_022551) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "timescaledb"
@@ -213,6 +213,42 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_10_061334) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "algorithm_id"
+  end
+
+  create_table "trade_off_aspect_contenders", force: :cascade do |t|
+    t.integer "trade_off_contender_id"
+    t.integer "trade_off_aspect_id"
+    t.text "body"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "trade_off_aspects", force: :cascade do |t|
+    t.string "title"
+    t.text "description"
+    t.integer "position"
+    t.integer "trade_off_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "trade_off_contenders", force: :cascade do |t|
+    t.string "title"
+    t.integer "position"
+    t.integer "trade_off_id"
+    t.text "description"
+    t.integer "skill_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "trade_offs", force: :cascade do |t|
+    t.string "title"
+    t.integer "position"
+    t.boolean "header"
+    t.integer "trade_off_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "traits", force: :cascade do |t|

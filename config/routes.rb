@@ -1,4 +1,8 @@
 Rails.application.routes.draw do
+  resources :trade_off_aspects
+  resources :trade_off_aspect_contenders
+  resources :trade_off_contenders
+  resources :trade_offs
   resources :test_cases
   resources :project_skills
   resources :projects
@@ -33,6 +37,10 @@ Rails.application.routes.draw do
 
   post "/upload_avatar" => "users#upload_avatar"
   post "/users/find_by_username" => "users#find_by_username"
+
+  post "/trade_offs/make" => "trade_offs#make"
+
+  post "/trade_offs/prompt" => "trade_offs#prompt"
 
   get "/control_panel/empty_abstractions" => "control_panel#empty_abstractions"
   get "/control_panel/empty_quizzes" => "control_panel#empty_quizzes"
