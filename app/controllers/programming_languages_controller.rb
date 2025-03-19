@@ -1,5 +1,5 @@
 class ProgrammingLanguagesController < ApplicationController
-  before_action :set_programming_language, only: %i[ show update destroy traits ]
+  before_action :set_programming_language, only: %i[ show update destroy traits execute ]
 
   # GET /programming_languages
   def index
@@ -23,7 +23,15 @@ class ProgrammingLanguagesController < ApplicationController
 
   # GET /programming_languages/1
   def show
-    render json: @programming_language, serializer: ProgrammingLanguageSerializer, algorithms: true
+    render json: @programming_language, serializer: ProgrammingLanguageSerializer, algorithms: true, challenges: params[:challenges] || false 
+  end
+
+  def execute
+    render json: CodeCompiler.run({
+      code: params[:code],
+      algorithm_id: nil,
+      programming_language_id: params[:language][:id],
+    })
   end
 
   # POST /programming_languages

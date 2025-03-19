@@ -10,10 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_11_23_022551) do
+ActiveRecord::Schema[7.0].define(version: 2024_04_16_055225) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-  enable_extension "timescaledb"
 
   create_table "abstractions", force: :cascade do |t|
     t.integer "abstractable_id"
@@ -66,6 +65,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_23_022551) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "codeable", default: false
+    t.text "code"
+    t.json "code_lines"
   end
 
   create_table "chapters", force: :cascade do |t|

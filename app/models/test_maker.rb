@@ -40,7 +40,9 @@ class TestMaker < ApplicationRecord
             else
                 prefix = "int"
             end
-            return "#{prefix} #{input[0]} = #{input[1]};"
+            output = "#{prefix} #{input[0]} = #{input[1]};"
+            puts "result: #{output}"
+            return output
         when "java"
             prefix = ""
             if input[1].include?('"') || input[1].include?("'")

@@ -42,6 +42,12 @@ Rails.application.routes.draw do
 
   post "/trade_offs/prompt" => "trade_offs#prompt"
 
+  post "/resumes/prompt" => "resumes#prompt"
+
+  get '/programming_languages/:id/challenges' => "programming_languages#challenges"
+
+  post "/programming_languages/:id/execute" => "programming_languages#execute"
+
   get "/control_panel/empty_abstractions" => "control_panel#empty_abstractions"
   get "/control_panel/empty_quizzes" => "control_panel#empty_quizzes"
 

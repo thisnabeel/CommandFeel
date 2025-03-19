@@ -81,42 +81,36 @@ class CodeCompiler < ApplicationRecord
             puts res["output"]
 
             user_id = @@options[:user_id]
-            algorithm_id =  @@options[:algorithm_id]
-            @@algorithm = Algorithm.find(algorithm_id)
-
-
-            # t.integer "algorithm_id"
-            # t.integer "programming_language_id"
-            # t.integer "user_id"
-            # t.text "error_message"
-            # t.boolean "passing"
-            # t.datetime "created_at", null: false
-            # t.datetime "updated_at", null: false
-
-            passing = check_passing(res["output"])
-            
-            if user_id.present?
-                res["passing"] = Attempt.create!(
-                    user_id: user_id,
-                    programming_language_id: @@language.id,
-                    algorithm_id: algorithm_id,
-                    passing: passing,
-                    console_output: res["output"]
-                )
-            else
-                puts "EXPECTATION:"
-                puts @@options[:expectation]
-                puts "RESULT:"
-                puts res["output"].gsub("\n", ' ').strip
-                res["passing"] = {
-                    # user_id: user_id,
-                    programming_language_id: @@language.id,
-                    algorithm_id: algorithm_id,
-                    passing: passing,
-                    console_output: res["output"],
-                    expected: @@options[:expectation]
-                }
+            if @@options[:algorithm_id]
+                algorithm_id =  @@options[:algorithm_id]
+                @@algorithm = Algorithm.find(algorithm_id)
+                
+                passing = check_passing(res["output"])
+                
+                if user_id.present?
+                    res["passing"] = Attempt.create!(
+                        user_id: user_id,
+                        programming_language_id: @@language.id,
+                        algorithm_id: algorithm_id,
+                        passing: passing,
+                        console_output: res["output"]
+                    )
+                else
+                    puts "EXPECTATION:"
+                    puts @@options[:expectation]
+                    puts "RESULT:"
+                    puts res["output"].gsub("\n", ' ').strip
+                    res["passing"] = {
+                        # user_id: user_id,
+                        programming_language_id: @@language.id,
+                        algorithm_id: algorithm_id,
+                        passing: passing,
+                        console_output: res["output"],
+                        expected: @@options[:expectation]
+                    }
+                end
             end
+
             return res
     end
 

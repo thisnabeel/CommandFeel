@@ -10,7 +10,11 @@ class ChaptersController < ApplicationController
 
   # GET /chapters/1
   def show
-    render json: @chapter
+    render json: @chapter, serializer: ChapterSerializer, serializer_options: { 
+      abstractions: true,
+      challenges: true,
+      quizzes: true
+    }
   end
 
   # POST /chapters
