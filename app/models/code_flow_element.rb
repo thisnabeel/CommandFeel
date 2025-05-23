@@ -1,0 +1,2 @@
+class CodeFlowElement < ApplicationRecord
+end

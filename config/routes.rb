@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+  resources :comprehension_questions
+  resources :leetcode_problems
+  resources :code_flow_elements
   resources :trade_off_aspects
   resources :trade_off_aspect_contenders
   resources :trade_off_contenders
@@ -14,6 +17,31 @@ Rails.application.routes.draw do
   resources :language_algorithm_starters
   resources :attempts
   resources :programming_language_traits
+
+  # Direct route for quests
+  resources :quests, only: [:show] do
+    collection do
+      get :popular
+    end
+    member do
+      post 'quest_wizard'  # POST /quests/:id/quest_wizard
+    end
+  end
+
+  # Direct route for quest steps and their choices
+  resources :quest_steps, only: [] do
+    resources :quest_step_choices
+  end
+
+  resources :skills do
+    resources :quests do
+      resources :quest_steps do
+        member do
+          post 'upload_image'
+        end
+      end
+    end
+  end
 
   resources :traits do 
     collection do

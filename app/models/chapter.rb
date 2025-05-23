@@ -7,5 +7,6 @@ class Chapter < ApplicationRecord
 
   has_many :quizzes, as: :quizable
   has_many :quiz_sets, as: :quiz_setable, dependent: :destroy
-
+  
+  has_many :quests, dependent: :destroy
 end

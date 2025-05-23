@@ -1,0 +1,2 @@
+class LeetcodeProblem < ApplicationRecord
+end

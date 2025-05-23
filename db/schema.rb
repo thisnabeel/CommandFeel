@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_04_16_055225) do
+ActiveRecord::Schema[7.0].define(version: 2025_05_22_235000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -79,12 +79,39 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_16_055225) do
     t.index ["chapter_id"], name: "index_chapters_on_chapter_id"
   end
 
+  create_table "code_flow_elements", force: :cascade do |t|
+    t.string "title"
+    t.string "category"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "comprehension_questions", force: :cascade do |t|
+    t.bigint "leetcode_problem_id", null: false
+    t.text "question"
+    t.text "answer"
+    t.string "question_type"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["leetcode_problem_id"], name: "index_comprehension_questions_on_leetcode_problem_id"
+  end
+
   create_table "language_algorithm_starters", force: :cascade do |t|
     t.integer "programming_language_id"
     t.integer "algorithm_id"
     t.text "code"
     t.json "code_lines"
     t.string "video_url"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "leetcode_problems", force: :cascade do |t|
+    t.string "title"
+    t.text "description"
+    t.string "difficulty"
+    t.string "url"
+    t.string "topics"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -143,6 +170,43 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_16_055225) do
     t.datetime "updated_at", null: false
     t.integer "proofable_id"
     t.string "proofable_type"
+  end
+
+  create_table "quest_step_choices", force: :cascade do |t|
+    t.bigint "quest_step_id", null: false
+    t.text "body"
+    t.boolean "status", default: false
+    t.integer "position"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.text "reasoning"
+    t.index ["quest_step_id"], name: "index_quest_step_choices_on_quest_step_id"
+  end
+
+  create_table "quest_steps", force: :cascade do |t|
+    t.string "image_url"
+    t.string "thumbnail_url"
+    t.bigint "quest_id", null: false
+    t.integer "position"
+    t.text "body"
+    t.integer "success_step_id"
+    t.integer "failure_step_id"
+    t.integer "quest_reward_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["quest_id"], name: "index_quest_steps_on_quest_id"
+  end
+
+  create_table "quests", force: :cascade do |t|
+    t.string "title"
+    t.text "description"
+    t.integer "position"
+    t.string "image_url"
+    t.integer "difficulty"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "skill_id"
+    t.index ["skill_id"], name: "index_quests_on_skill_id"
   end
 
   create_table "quiz_choices", force: :cascade do |t|
@@ -290,6 +354,10 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_16_055225) do
   end
 
   add_foreign_key "chapters", "chapters"
+  add_foreign_key "comprehension_questions", "leetcode_problems"
+  add_foreign_key "quest_step_choices", "quest_steps"
+  add_foreign_key "quest_steps", "quests"
+  add_foreign_key "quests", "skills"
   add_foreign_key "quiz_choices", "quizzes"
   add_foreign_key "skills", "skills"
 end

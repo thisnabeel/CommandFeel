@@ -13,7 +13,7 @@ class ChatGpt < ActiveRecord::Base
 
         response = client.chat(
         parameters: {
-            model: "gpt-3.5-turbo",
+            model: "gpt-4o",
             messages: messages,
             temperature: 0.7,
         }

@@ -1,0 +1,13 @@
+class Quest < ApplicationRecord
+  belongs_to :skill
+  has_many :quest_steps, dependent: :destroy
+
+  validates :title, presence: true
+  validates :position, presence: true, numericality: { only_integer: true }
+  validates :difficulty, presence: true, numericality: { only_integer: true }
+
+  def self.popular
+    quests = Quest.includes(quest_steps: :quest_step_choices).to_a
+    quests.sort_by { |quest| quest.quest_steps.size }.reverse.first(10)
+  end
+end 

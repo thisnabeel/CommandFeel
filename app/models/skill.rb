@@ -2,6 +2,7 @@ class Skill < ApplicationRecord
   belongs_to :skill, optional: true
 
   has_many :skills, dependent: :destroy
+  has_many :quests, dependent: :destroy
 
   has_many :abstractions, as: :abstractable, dependent: :destroy
   has_many :challenges, as: :challengeable, dependent: :destroy
@@ -60,26 +61,26 @@ class Skill < ApplicationRecord
 
 		case params[:category]
 		when "jeopardy"
-			prompt = "give me jeopardy question for the tech concept of '#{self.title}'. return json format: {question:, answer: '#{self.title}'}"
+			prompt = 'give me jeopardy question for the tech concept of "#{self.title}". return json format: {question:, answer: "#{self.title}"}'
 		when "general"
-			prompt = "give me 1 question & answer that proves I understand '#{self.title}'. Make sure it's different from the questions: #{self.quizzes.pluck(:question).join(", ")}. return json format: {question:, answer:}"
+			prompt = 'give me 1 question & answer that proves I understand "#{self.title}". Make sure it\'s different from the questions: #{self.quizzes.pluck(:question).join(", ")}. return json format: {question:, answer:}'
 		when "general_mc"
-			prompt = "give me 1 multiple choice (4 choices) question & answer that proves I understand the engineering concept: '#{self.title}'. Make sure it's different from the questions: #{self.quizzes.pluck(:question).join(", ")}. return json format: {question:, choices:, answer:}"
+			prompt = 'give me 1 multiple choice (4 choices) question & answer that proves I understand the engineering concept: "#{self.title}". Make sure it\'s different from the questions: #{self.quizzes.pluck(:question).join(", ")}. return json format: {question:, choices:, answer:}'
 		when "techniques_mc"
-			prompt = "give me 1 multiple choice (4 choices) for: '#{self.title} technique'. return json format: {question:, choices:, answer:}"
+			prompt = 'give me 1 multiple choice (4 choices) for: "#{self.title} technique". return json format: {question:, choices:, answer:}'
 		when "abstractions_mc"
-			prompt = "multiple choice question for: #{self.title} using real life abstractions in a real-life scenario like 'Imagine you are ...'. return json format: {question:, choices:, answer:}"
+			prompt = 'multiple choice question for: #{self.title} using real life abstractions in a real-life scenario like "Imagine you are ...". return json format: {question:, choices:, answer:}'
 		when "steps"
-			prompt = "Give me choices and correct answer for: '#{params[:prompt]} using #{self.title}'. Question should start with 'What are the steps for...', Choice should be unnumbered and unlettered. Give me json format: {question:, choices:, answer:}"
+			prompt = 'Give me choices and correct answer for: "#{params[:prompt]} using #{self.title}". Question should start with "What are the steps for...", Choice should be unnumbered and unlettered. Give me json format: {question:, choices:, answer:}'
 		when "scenario"
-			prompt = "Give me a scenario where #{self.title} is the answer. Pose it as “You are…” as a question without mentioning the answer at all. return json format: {question:, answer:}"
+			prompt = 'Give me a scenario where #{self.title} is the answer. Pose it as "You are..." as a question without mentioning the answer at all. return json format: {question:, answer:}'
 		when "scenario_mc"
-			prompt = "Give me a scenario where #{self.title} is the answer. Pose it as “You are…” as a question without mentioning the answer at all. Give me 4 choices, only one of them being the answer. return json format:  {question:, choices:, answer:}"
+			prompt = 'Give me a scenario where #{self.title} is the answer. Pose it as "You are..." as a question without mentioning the answer at all. Give me 4 choices, only one of them being the answer. return json format: {question:, choices:, answer:}'
 		else
 			if params[:prompt].length > 2
-			prompt = "give me 1 question regarding #{params[:prompt]}, that proves I understand #{self.title}. return json format: {question:, answer:}"
+				prompt = 'give me 1 question regarding #{params[:prompt]}, that proves I understand #{self.title}. return json format: {question:, answer:}'
 			else
-			prompt = "give me 1 question & answer that proves I understand '#{self.title}'. Make sure it's different from the questions: #{self.quizzes.pluck(:question).join(", ")}. return json format: {question:, answer:}"
+				prompt = 'give me 1 question & answer that proves I understand "#{self.title}". Make sure it\'s different from the questions: #{self.quizzes.pluck(:question).join(", ")}. return json format: {question:, answer:}'
 			end
 		end
 
@@ -113,10 +114,10 @@ class Skill < ApplicationRecord
 
 	def generate_challenge
 
-		prompt = "
+		prompt = '
 			give me a challenge I can do as one person wiht minimal tools that proves i understand #{self.title}.
-			Make sure it's different from the questions: #{self.challenges.pluck(:title).join(", ") }.
-give me as json format: {tweet_sized_title:, instructions:}"
+			Make sure it\'s different from the questions: #{self.challenges.pluck(:title).join(", ")}.
+			give me as json format: {tweet_sized_title:, instructions:}'
 		res = ChatGpt.send(prompt)
 		challenge = Challenge.create(
 			challengeable_type: "Skill",
@@ -128,9 +129,9 @@ give me as json format: {tweet_sized_title:, instructions:}"
 	end
 
 	def generate_abstraction
-		prompt = "
+		prompt = '
 			in under 280 characters, eli5 #{self.title} with simple analogy
-			give it to me as a json exactly in this format {body: STRING}"
+			give it to me as a json exactly in this format {body: STRING}'
 		res = ChatGpt.send(prompt)
 		abstraction = Abstraction.create(
 			abstractable_type: "Skill",
