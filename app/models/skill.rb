@@ -129,15 +129,48 @@ class Skill < ApplicationRecord
 	end
 
 	def generate_abstraction
-		prompt = '
-			in under 280 characters, eli5 #{self.title} with simple analogy
-			give it to me as a json exactly in this format {body: STRING}'
-		res = ChatGpt.send(prompt)
-		abstraction = Abstraction.create(
+		prompt = <<~PROMPT
+			You are generating an analogy/abstraction for a computer science concept.
+
+			Concept: #{self.title}
+
+			INSTRUCTIONS:
+			- Create a simple, real-world analogy that explains the concept
+			- Use everyday examples that anyone can understand
+			- Keep the explanation under 280 characters
+			- Make it ELI5 (Explain Like I'm 5) friendly
+			- Avoid technical jargon
+
+			OUTPUT:
+			Strictly return valid JSON, formatted like this:
+
+			```json
+			{
+				"body": "Your simple analogy here"
+			}
+			```
+
+			Do NOT include any explanation outside the JSON block.
+		PROMPT
+
+		response = ChatGpt.send(prompt)
+		
+		# Parse the JSON from the content field - it's in the answer field and between ```json markers
+		json_content = response["answer"].match(/```json\n(.*?)\n```/m)[1]
+		abstraction_data = JSON.parse(json_content)
+		
+		abstraction = Abstraction.create!(
 			abstractable_type: "Skill",
 			abstractable_id: self.id,
-			body: res["body"],
+			body: abstraction_data["body"]
 		)
+		
 		return abstraction
+	rescue JSON::ParserError => e
+		Rails.logger.error("Failed to parse ChatGPT response: #{e.message}")
+		raise
+	rescue StandardError => e
+		Rails.logger.error("Error generating abstraction: #{e.message}")
+		raise
 	end
 end
