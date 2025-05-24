@@ -49,9 +49,16 @@ class QuestsController < ApplicationController
       Skill Focus: #{@quest.skill.title}
       Concept: #{@quest.description}
 
+      #{if params[:abstraction].present?
+        "Abstraction: #{params[:abstraction]}"
+      end}
+
       INSTRUCTIONS:
       - Generate a sequence of quiz steps (5–7 items).
       - Each step must have a `body` field (a teaching explanation or a multiple choice question).
+      #{if params[:abstraction].present?
+        "- Make sure to use the theme of the provided analogy/abstraction and be non-techie friendly"
+      end}
       - For teaching steps, use `"choices": []`.
       - For quiz questions, include 2–4 `choices`, each with:
           - "body": String
