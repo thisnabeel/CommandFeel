@@ -52,6 +52,10 @@ Rails.application.routes.draw do
   end
 
   resources :wonders do
+    collection do
+      post :generate_arcade
+      get :arcade
+    end
     member do
       post 'generate_quiz'
       post 'generate_challenge'
