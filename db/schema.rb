@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2025_05_22_235000) do
+ActiveRecord::Schema[7.0].define(version: 2025_05_26_020000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -205,8 +205,9 @@ ActiveRecord::Schema[7.0].define(version: 2025_05_22_235000) do
     t.integer "difficulty"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "skill_id"
-    t.index ["skill_id"], name: "index_quests_on_skill_id"
+    t.string "questable_type"
+    t.bigint "questable_id"
+    t.index ["questable_type", "questable_id"], name: "index_quests_on_questable_type_and_questable_id"
   end
 
   create_table "quiz_choices", force: :cascade do |t|
@@ -353,11 +354,27 @@ ActiveRecord::Schema[7.0].define(version: 2025_05_22_235000) do
     t.index ["username"], name: "index_users_on_username", unique: true
   end
 
+  create_table "wonders", force: :cascade do |t|
+    t.string "title"
+    t.string "image"
+    t.text "description"
+    t.integer "difficulty"
+    t.integer "position"
+    t.bigint "wonder_id"
+    t.boolean "visibility"
+    t.string "code"
+    t.string "slug"
+    t.boolean "is_course"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["wonder_id"], name: "index_wonders_on_wonder_id"
+  end
+
   add_foreign_key "chapters", "chapters"
   add_foreign_key "comprehension_questions", "leetcode_problems"
   add_foreign_key "quest_step_choices", "quest_steps"
   add_foreign_key "quest_steps", "quests"
-  add_foreign_key "quests", "skills"
   add_foreign_key "quiz_choices", "quizzes"
   add_foreign_key "skills", "skills"
+  add_foreign_key "wonders", "wonders"
 end

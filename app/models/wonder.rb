@@ -1,7 +1,7 @@
-class Skill < ApplicationRecord
-  belongs_to :skill, optional: true
+class Wonder < ApplicationRecord
+  belongs_to :wonder, optional: true
 
-  has_many :skills, dependent: :destroy
+  has_many :wonders, dependent: :destroy
   has_many :quests, as: :questable, dependent: :destroy
 
   has_many :abstractions, as: :abstractable, dependent: :destroy
@@ -16,23 +16,23 @@ class Skill < ApplicationRecord
   
 
 	def settle_quizzes
-		skill = self
-		return if !skill.quizzes.present? 
-		return if !skill.quizzes.where(quiz_set_id: nil).present?
-		if !skill.quiz_sets.present?
-			quiz_set = QuizSet.create(quiz_setable_type: "Skill", quiz_setable_id: skill.id, title: "Main", position: 1)
+		wonder = self
+		return if !wonder.quizzes.present? 
+		return if !wonder.quizzes.where(quiz_set_id: nil).present?
+		if !wonder.quiz_sets.present?
+			quiz_set = QuizSet.create(quiz_setable_type: "Wonder", quiz_setable_id: wonder.id, title: "Main", position: 1)
 		else
-			quiz_set = skill.quiz_sets.first
+			quiz_set = wonder.quiz_sets.first
 		end
-		skill.quizzes.each_with_index do |quiz, index|
+		wonder.quizzes.each_with_index do |quiz, index|
 			quiz.update(quiz_set_id: quiz_set.id, position: index + 1)
 		end
 	end
 
-	# Find all skills and check if they have slug
+	# Find all wonders and check if they have slug
 	def self.make_slugs
-		Skill.where(slug: nil).each do |s|
-			s.make_slug
+		Wonder.where(slug: nil).each do |w|
+			w.make_slug
 		end
 	end
 
@@ -45,9 +45,9 @@ class Skill < ApplicationRecord
 	
 	# Recursive method to retrieve all children in a flat array
 	def all_children_with_quizzes
-		children = [self] + self.skills.includes(:quizzes).to_a
-		self.skills.each do |child_skill|
-			children.concat(child_skill.all_children_with_quizzes)
+		children = [self] + self.wonders.includes(:quizzes).to_a
+		self.wonders.each do |child_wonder|
+			children.concat(child_wonder.all_children_with_quizzes)
 		end
 		children
 	end
@@ -92,7 +92,7 @@ class Skill < ApplicationRecord
 		data = JSON.parse(json_content)
 		
 		quiz = Quiz.create!(
-			quizable_type: "Skill",
+			quizable_type: "Wonder",
 			quizable_id: self.id,
 			question: data["question"],
 			quiz_set_id: params[:quiz_set_id],
@@ -145,7 +145,7 @@ class Skill < ApplicationRecord
 			give me as json format: {tweet_sized_title:, instructions:}'
 		res = ChatGpt.send(prompt)
 		challenge = Challenge.create(
-			challengeable_type: "Skill",
+			challengeable_type: "Wonder",
 			challengeable_id: self.id,
 			title: res["tweet_sized_title"],
 			body: res["instructions"],
@@ -185,7 +185,7 @@ class Skill < ApplicationRecord
 		abstraction_data = JSON.parse(json_content)
 		
 		abstraction = Abstraction.create!(
-			abstractable_type: "Skill",
+			abstractable_type: "Wonder",
 			abstractable_id: self.id,
 			body: abstraction_data["body"]
 		)

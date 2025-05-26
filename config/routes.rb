@@ -43,6 +43,29 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :quests do
+    resources :quest_steps do
+      member do
+        post 'upload_image'
+      end
+    end
+  end
+
+  resources :wonders do
+    member do
+      post 'generate_quiz'
+      post 'generate_challenge'
+      post 'generate_abstraction'
+    end
+    resources :quests do
+      resources :quest_steps do
+        member do
+          post 'upload_image'
+        end
+      end
+    end
+  end
+
   resources :traits do 
     collection do
       post 'order', to: 'traits#order'

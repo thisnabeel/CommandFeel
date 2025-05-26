@@ -1,5 +1,5 @@
 class Quest < ApplicationRecord
-  belongs_to :skill
+  belongs_to :questable, polymorphic: true
   has_many :quest_steps, dependent: :destroy
 
   validates :title, presence: true
