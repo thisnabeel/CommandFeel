@@ -66,7 +66,7 @@ class WondersController < ApplicationController
       }
     end
 
-    render json: response
+    render json: response.shuffle
   end
 
   def generate_arcade
