@@ -96,6 +96,19 @@ ActiveRecord::Schema[7.0].define(version: 2025_05_26_030000) do
     t.index ["leetcode_problem_id"], name: "index_comprehension_questions_on_leetcode_problem_id"
   end
 
+  create_table "job_statuses", force: :cascade do |t|
+    t.string "job_type", null: false
+    t.string "status", null: false
+    t.datetime "started_at", null: false
+    t.datetime "completed_at"
+    t.text "error_message"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["job_type"], name: "index_job_statuses_on_job_type"
+    t.index ["started_at"], name: "index_job_statuses_on_started_at"
+    t.index ["status"], name: "index_job_statuses_on_status"
+  end
+
   create_table "language_algorithm_starters", force: :cascade do |t|
     t.integer "programming_language_id"
     t.integer "algorithm_id"

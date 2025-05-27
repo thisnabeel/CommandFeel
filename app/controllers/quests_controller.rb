@@ -46,7 +46,7 @@ class QuestsController < ApplicationController
 
       Theme: #{@quest.title}
       Level: #{params[:level]}
-      Skill Focus: #{@quest.skill.title}
+      Skill Focus: #{@quest.questable.title}
       Concept: #{@quest.description}
 
       #{if params[:abstraction].present?
@@ -56,6 +56,7 @@ class QuestsController < ApplicationController
       INSTRUCTIONS:
       - Generate a sequence of quiz steps (5–7 items).
       - Each step must have a `body` field (a teaching explanation or a multiple choice question).
+      - Don't use the word 'imagine' in the body of the step.
       #{if params[:abstraction].present?
         "- Make sure to use the theme of the provided analogy/abstraction and be non-techie friendly"
       end}
