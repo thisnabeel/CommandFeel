@@ -10,6 +10,12 @@ class Skill < ApplicationRecord
   has_many :quizzes, as: :quizable
   has_many :quiz_sets, as: :quiz_setable, dependent: :destroy
 
+  has_many :infrastructure_pattern_dependencies, as: :dependable, dependent: :destroy
+  has_many :dependent_infrastructure_patterns, through: :infrastructure_pattern_dependencies, source: :infrastructure_pattern
+
+  has_many :scripts, as: :scriptable, dependent: :destroy
+
+  has_many :project_requirement_tools, as: :toolable
 
   # after_create :init_position
   after_create :make_slug

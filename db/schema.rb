@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2025_05_26_030000) do
+ActiveRecord::Schema[7.0].define(version: 2025_05_29_213805) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -96,6 +96,34 @@ ActiveRecord::Schema[7.0].define(version: 2025_05_26_030000) do
     t.index ["leetcode_problem_id"], name: "index_comprehension_questions_on_leetcode_problem_id"
   end
 
+  create_table "infrastructure_pattern_dependencies", force: :cascade do |t|
+    t.bigint "infrastructure_pattern_id", null: false
+    t.string "dependable_type", null: false
+    t.bigint "dependable_id", null: false
+    t.text "usage", null: false
+    t.integer "position"
+    t.boolean "visibility", default: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["dependable_type", "dependable_id"], name: "index_infrastructure_pattern_dependencies_on_dependable"
+    t.index ["infrastructure_pattern_id", "dependable_type", "dependable_id"], name: "idx_ipd_on_ip_and_dependable"
+    t.index ["infrastructure_pattern_id", "dependable_type", "dependable_id"], name: "idx_ipd_uniqueness", unique: true
+    t.index ["infrastructure_pattern_id"], name: "idx_ipd_on_ip_id"
+    t.index ["position"], name: "index_infrastructure_pattern_dependencies_on_position"
+  end
+
+  create_table "infrastructure_patterns", force: :cascade do |t|
+    t.string "title", null: false
+    t.text "description"
+    t.integer "position"
+    t.boolean "visibility", default: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["position", "visibility"], name: "idx_ip_on_position_and_visibility"
+    t.index ["position"], name: "index_infrastructure_patterns_on_position"
+    t.index ["title"], name: "index_infrastructure_patterns_on_title"
+  end
+
   create_table "job_statuses", force: :cascade do |t|
     t.string "job_type", null: false
     t.string "status", null: false
@@ -143,6 +171,33 @@ ActiveRecord::Schema[7.0].define(version: 2025_05_26_030000) do
     t.string "editor_slug"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "project_requirement_tools", force: :cascade do |t|
+    t.bigint "project_requirement_id", null: false
+    t.string "toolable_type", null: false
+    t.bigint "toolable_id", null: false
+    t.boolean "appropriate", default: true
+    t.text "reason"
+    t.integer "position"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "suggested_name"
+    t.index ["position"], name: "index_project_requirement_tools_on_position"
+    t.index ["project_requirement_id"], name: "index_project_requirement_tools_on_project_requirement_id"
+    t.index ["toolable_type", "toolable_id"], name: "idx_proj_req_tools_on_toolable"
+    t.index ["toolable_type", "toolable_id"], name: "index_project_requirement_tools_on_toolable"
+  end
+
+  create_table "project_requirements", force: :cascade do |t|
+    t.bigint "wonder_id", null: false
+    t.string "title", null: false
+    t.integer "position"
+    t.string "scale"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["position"], name: "index_project_requirements_on_position"
+    t.index ["wonder_id"], name: "index_project_requirements_on_wonder_id"
   end
 
   create_table "project_skills", force: :cascade do |t|
@@ -269,6 +324,22 @@ ActiveRecord::Schema[7.0].define(version: 2025_05_26_030000) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "scripts", force: :cascade do |t|
+    t.string "title", null: false
+    t.text "body"
+    t.string "scriptable_type", null: false
+    t.integer "scriptable_id", null: false
+    t.integer "position"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.text "linkedin_body"
+    t.text "tiktok_body"
+    t.text "youtube_body"
+    t.string "youtube_title"
+    t.index ["position"], name: "index_scripts_on_position"
+    t.index ["scriptable_type", "scriptable_id"], name: "index_scripts_on_scriptable_type_and_scriptable_id"
+  end
+
   create_table "skills", force: :cascade do |t|
     t.string "title"
     t.string "image"
@@ -368,6 +439,20 @@ ActiveRecord::Schema[7.0].define(version: 2025_05_26_030000) do
     t.index ["username"], name: "index_users_on_username", unique: true
   end
 
+  create_table "wonder_infrastructure_patterns", force: :cascade do |t|
+    t.bigint "wonder_id", null: false
+    t.bigint "infrastructure_pattern_id", null: false
+    t.integer "position"
+    t.boolean "visibility", default: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["infrastructure_pattern_id", "wonder_id"], name: "idx_wip_on_ip_and_wonder"
+    t.index ["infrastructure_pattern_id"], name: "idx_wip_on_ip_id"
+    t.index ["position"], name: "index_wonder_infrastructure_patterns_on_position"
+    t.index ["wonder_id", "infrastructure_pattern_id"], name: "idx_wip_uniqueness", unique: true
+    t.index ["wonder_id"], name: "index_wonder_infrastructure_patterns_on_wonder_id"
+  end
+
   create_table "wonders", force: :cascade do |t|
     t.string "title"
     t.string "image"
@@ -386,9 +471,14 @@ ActiveRecord::Schema[7.0].define(version: 2025_05_26_030000) do
 
   add_foreign_key "chapters", "chapters"
   add_foreign_key "comprehension_questions", "leetcode_problems"
+  add_foreign_key "infrastructure_pattern_dependencies", "infrastructure_patterns"
+  add_foreign_key "project_requirement_tools", "project_requirements"
+  add_foreign_key "project_requirements", "wonders"
   add_foreign_key "quest_step_choices", "quest_steps"
   add_foreign_key "quest_steps", "quests"
   add_foreign_key "quiz_choices", "quizzes"
   add_foreign_key "skills", "skills"
+  add_foreign_key "wonder_infrastructure_patterns", "infrastructure_patterns"
+  add_foreign_key "wonder_infrastructure_patterns", "wonders"
   add_foreign_key "wonders", "wonders"
 end

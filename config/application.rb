@@ -16,7 +16,7 @@ module Api
     config.middleware.insert_before 0, Rack::Cors do
       allow do
         origins '*'
-        resource '*', :headers => :any, :methods => [:get, :put, :post, :options, :delete]
+        resource '*', :headers => :any, :methods => [:get, :put, :post, :patch, :options, :delete]
       end
     end
 

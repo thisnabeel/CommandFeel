@@ -37,7 +37,7 @@ class QuestsController < ApplicationController
   end
 
   def popular
-    render json: Quest.popular
+    render json: Quest.popular(20)
   end
 
   def quest_wizard

@@ -20,13 +20,13 @@ class ChatGpt < ActiveRecord::Base
         )
 
         # return response.dig("choices", 0, "message", "content")
-        puts response
+
         begin
             jsonResponse = JSON.parse(response.dig("choices", 0, "message", "content").lstrip)
         rescue
             jsonResponse = { "answer" => response.dig("choices", 0, "message", "content").lstrip }
         end
-        puts jsonResponse
+
         return jsonResponse
 
     end

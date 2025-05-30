@@ -10,6 +10,20 @@ class Wonder < ApplicationRecord
   has_many :quizzes, as: :quizable
   has_many :quiz_sets, as: :quiz_setable, dependent: :destroy
 
+  has_many :wonder_features, dependent: :destroy
+  has_many :features, through: :wonder_features
+  has_many :feature_dependencies, as: :dependable, dependent: :destroy
+  has_many :dependent_features, through: :feature_dependencies, source: :feature
+
+  has_many :wonder_infrastructure_patterns, dependent: :destroy
+  has_many :infrastructure_patterns, through: :wonder_infrastructure_patterns
+  has_many :infrastructure_pattern_dependencies, as: :dependable, dependent: :destroy
+  has_many :dependent_infrastructure_patterns, through: :infrastructure_pattern_dependencies, source: :infrastructure_pattern
+
+  has_many :scripts, as: :scriptable, dependent: :destroy
+
+  has_many :project_requirements, -> { order(position: :asc) }, dependent: :destroy
+  has_many :project_requirement_tools, as: :toolable
 
   # after_create :init_position
   after_create :make_slug

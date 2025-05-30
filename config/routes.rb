@@ -41,6 +41,11 @@ Rails.application.routes.draw do
         end
       end
     end
+    resources :scripts, only: [:index, :create, :update, :destroy] do
+      collection do
+        post :reorder
+      end
+    end
   end
 
   resources :quests do
@@ -66,6 +71,11 @@ Rails.application.routes.draw do
         member do
           post 'upload_image'
         end
+      end
+    end
+    resources :scripts, only: [:index, :create, :update, :destroy] do
+      collection do
+        post :reorder
       end
     end
   end
@@ -136,6 +146,7 @@ Rails.application.routes.draw do
   post "/skills/generate_quiz" => "skills#generate_quiz"
   post "/skills/generate_challenge" => "skills#generate_challenge"
   post "/skills/generate_abstraction" => "skills#generate_abstraction"
+  post "/infrastructure_patterns/generate" => "infrastructure_patterns#generate_patterns"
 
   # devise_for :users, controllers: {
   #       sessions: 'users/sessions',
@@ -155,6 +166,25 @@ Rails.application.routes.draw do
 
   namespace :admin do
     resources :job_statuses, only: [:index, :show]
+  end
+
+  resources :infrastructure_patterns do
+    collection do
+      post :reorder
+      get '/by_wonder/:wonder_id', to: 'infrastructure_patterns#by_wonder'
+    end
+    
+    member do
+      post :add_dependency
+      delete '/dependencies/:dependency_id', to: 'infrastructure_patterns#remove_dependency'
+    end
+  end
+
+  # Direct routes for scripts
+  resources :scripts, only: [:show, :update, :destroy] do
+    collection do
+      post :script_wizard
+    end
   end
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
