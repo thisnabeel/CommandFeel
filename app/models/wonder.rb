@@ -1,4 +1,6 @@
 class Wonder < ApplicationRecord
+  include Taggable
+
   belongs_to :wonder, optional: true
 
   has_many :wonders, dependent: :destroy
@@ -24,6 +26,9 @@ class Wonder < ApplicationRecord
 
   has_many :project_requirements, -> { order(position: :asc) }, dependent: :destroy
   has_many :project_requirement_tools, as: :toolable
+
+  has_many :phrase_links, as: :phrasable, dependent: :destroy
+  has_many :phrases, through: :phrase_links
 
   # after_create :init_position
   after_create :make_slug

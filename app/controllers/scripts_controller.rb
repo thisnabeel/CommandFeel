@@ -3,7 +3,11 @@ class ScriptsController < ApplicationController
   before_action :set_script, only: [:show, :update, :destroy]
 
   def index
-    @scripts = @scriptable.scripts.order(position: :asc)
+    @scripts = if @scriptable
+                 @scriptable.scripts.order(position: :asc)
+               else
+                 Script.all.order(position: :asc)
+               end
     render json: @scripts
   end
 

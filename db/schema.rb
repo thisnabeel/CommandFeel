@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2025_05_29_213805) do
+ActiveRecord::Schema[7.0].define(version: 2025_06_01_055044) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -77,6 +77,23 @@ ActiveRecord::Schema[7.0].define(version: 2025_05_29_213805) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["chapter_id"], name: "index_chapters_on_chapter_id"
+  end
+
+  create_table "code_blocks", force: :cascade do |t|
+    t.text "content", null: false
+    t.integer "position"
+    t.string "code_blockable_type", null: false
+    t.bigint "code_blockable_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["code_blockable_type", "code_blockable_id", "position"], name: "index_code_blocks_on_blockable_and_position"
+    t.index ["code_blockable_type", "code_blockable_id"], name: "index_code_blocks_on_code_blockable"
+  end
+
+  create_table "code_comparisons", force: :cascade do |t|
+    t.string "title", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "code_flow_elements", force: :cascade do |t|
@@ -153,6 +170,27 @@ ActiveRecord::Schema[7.0].define(version: 2025_05_29_213805) do
     t.string "difficulty"
     t.string "url"
     t.string "topics"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "phrase_links", force: :cascade do |t|
+    t.string "phrasable_type"
+    t.bigint "phrasable_id"
+    t.bigint "phrase_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "title"
+    t.text "explanation"
+    t.string "category"
+    t.index ["phrasable_type", "phrasable_id", "phrase_id"], name: "index_phrase_links_on_phrasable_and_phrase", unique: true
+    t.index ["phrasable_type", "phrasable_id"], name: "index_phrase_links_on_phrasable"
+    t.index ["phrase_id"], name: "index_phrase_links_on_phrase_id"
+  end
+
+  create_table "phrases", force: :cascade do |t|
+    t.text "body", null: false
+    t.string "role"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -356,6 +394,24 @@ ActiveRecord::Schema[7.0].define(version: 2025_05_29_213805) do
     t.index ["skill_id"], name: "index_skills_on_skill_id"
   end
 
+  create_table "taggings", force: :cascade do |t|
+    t.bigint "tag_id", null: false
+    t.string "taggable_type", null: false
+    t.bigint "taggable_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["tag_id", "taggable_type", "taggable_id"], name: "index_taggings_uniqueness", unique: true
+    t.index ["tag_id"], name: "index_taggings_on_tag_id"
+    t.index ["taggable_type", "taggable_id"], name: "index_taggings_on_taggable"
+  end
+
+  create_table "tags", force: :cascade do |t|
+    t.string "title", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["title"], name: "index_tags_on_title", unique: true
+  end
+
   create_table "test_cases", force: :cascade do |t|
     t.integer "language_algorithm_starter_id"
     t.text "code"
@@ -472,12 +528,14 @@ ActiveRecord::Schema[7.0].define(version: 2025_05_29_213805) do
   add_foreign_key "chapters", "chapters"
   add_foreign_key "comprehension_questions", "leetcode_problems"
   add_foreign_key "infrastructure_pattern_dependencies", "infrastructure_patterns"
+  add_foreign_key "phrase_links", "phrases"
   add_foreign_key "project_requirement_tools", "project_requirements"
   add_foreign_key "project_requirements", "wonders"
   add_foreign_key "quest_step_choices", "quest_steps"
   add_foreign_key "quest_steps", "quests"
   add_foreign_key "quiz_choices", "quizzes"
   add_foreign_key "skills", "skills"
+  add_foreign_key "taggings", "tags"
   add_foreign_key "wonder_infrastructure_patterns", "infrastructure_patterns"
   add_foreign_key "wonder_infrastructure_patterns", "wonders"
   add_foreign_key "wonders", "wonders"

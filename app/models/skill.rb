@@ -1,4 +1,6 @@
 class Skill < ApplicationRecord
+  include Taggable
+
   belongs_to :skill, optional: true
 
   has_many :skills, dependent: :destroy
@@ -16,6 +18,9 @@ class Skill < ApplicationRecord
   has_many :scripts, as: :scriptable, dependent: :destroy
 
   has_many :project_requirement_tools, as: :toolable
+
+  has_many :phrase_links, as: :phrasable, dependent: :destroy
+  has_many :phrases, through: :phrase_links
 
   # after_create :init_position
   after_create :make_slug

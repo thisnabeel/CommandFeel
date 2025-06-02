@@ -46,6 +46,8 @@ Rails.application.routes.draw do
         post :reorder
       end
     end
+    resources :phrases, only: [:index, :create, :destroy], controller: 'phrases'
+    resources :tags, only: [:index, :create, :destroy], controller: 'tags'
   end
 
   resources :quests do
@@ -78,6 +80,8 @@ Rails.application.routes.draw do
         post :reorder
       end
     end
+    resources :phrases, only: [:index, :create, :destroy], controller: 'phrases'
+    resources :tags, only: [:index, :create, :destroy], controller: 'tags'
   end
 
   resources :traits do 
@@ -181,9 +185,47 @@ Rails.application.routes.draw do
   end
 
   # Direct routes for scripts
-  resources :scripts, only: [:show, :update, :destroy] do
+  resources :scripts, only: [:show, :update, :destroy, :index] do
     collection do
       post :script_wizard
+    end
+  end
+
+  # Direct routes for phrases
+  resources :phrases do
+    member do
+      post :suggest_technologies
+    end
+    collection do
+      post :generate
+    end
+  end
+
+  resources :code_comparisons do
+    collection do
+      get :arcade
+      post :generate_solid_comparison
+    end
+    
+    resources :code_blocks do
+      collection do
+        post :reorder
+      end
+    end
+
+    resources :tags, only: [:index, :create, :destroy], controller: 'tags'
+  end
+
+  # Direct route for deleting code blocks
+  delete 'code_blocks/:id', to: 'code_blocks#direct_destroy'
+
+  # Direct tag management
+  resources :tags, except: [:new, :edit] do
+    collection do
+      get :search
+    end
+    member do
+      get :taggables
     end
   end
 
