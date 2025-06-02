@@ -34,11 +34,17 @@ class CodeComparisonsController < ApplicationController
   end
 
   def arcade
-    # Get a random code comparison with its code blocks
-    comparison = CodeComparison.includes(:code_blocks).order('RANDOM()').first
+    # Get a random code comparison with its code blocks, excluding used ones
+    used_ids = params[:used_ids]&.split(',')&.map(&:to_i) || []
+    
+    comparison = CodeComparison.includes(:code_blocks)
+                             .where.not(id: used_ids)
+                             .order('RANDOM()')
+                             .first
 
     if comparison
       render json: {
+        id: comparison.id,
         code_comparison_title: comparison.title,
         tags: comparison.tags,
         code_blocks: comparison.code_blocks.order(:position).map { |block| 
@@ -47,21 +53,28 @@ class CodeComparisonsController < ApplicationController
         answerable: comparison.answerable
       }
     else
-      # If no comparisons exist, generate a new one
+      # If no unused comparisons exist, generate a new one
       generate_solid_comparison
     end
   end
 
   def generate_solid_comparison
-    prompt = <<~PROMPT
-      You are generating code examples that demonstrate SOLID principles in software engineering.
+    unless params[:prompt].present?
+      render json: { error: "Prompt is required" }, status: :unprocessable_entity
+      return
+    end
+
+    base_prompt = <<~PROMPT
+      You are generating code examples that demonstrate different programming concepts, patterns, or anti-patterns.
+
+      Topic: #{params[:prompt]}
 
       INSTRUCTIONS:
-      - Choose one SOLID principle randomly
       - Create two code blocks:
-        1. First block should demonstrate code that violates the principle
-        2. Second block should show the corrected version that follows the principle
+        1. First block should demonstrate the problematic/incorrect approach
+        2. Second block should show the improved/correct implementation
       - Use Ruby code for the examples
+      - Include comments explaining the concept
       - Keep the examples concise but clear
       - Focus on real-world scenarios a developer might encounter
 
@@ -70,13 +83,13 @@ class CodeComparisonsController < ApplicationController
 
       ```json
       {
-        "title": "Name of the SOLID Principle",
+        "title": "#{params[:prompt]}",
         "code_blocks": [
           {
-            "content": "# Code that violates the principle..."
+            "content": "# Problem code..."
           },
           {
-            "content": "# Code that follows the principle..."
+            "content": "# Solution code..."
           }
         ]
       }
@@ -86,7 +99,7 @@ class CodeComparisonsController < ApplicationController
     PROMPT
 
     begin
-      response = WizardService.ask(prompt)
+      response = WizardService.ask(base_prompt)
       
       # Create the code comparison
       comparison = CodeComparison.create!(
@@ -105,7 +118,8 @@ class CodeComparisonsController < ApplicationController
         code_comparison_title: comparison.title,
         code_blocks: comparison.code_blocks.order(:position).map { |block| 
           { content: block.content }
-        }
+        },
+        answerable: comparison.answerable
       }
     rescue StandardError => e
       render json: { error: "Failed to generate code comparison: #{e.message}" }, status: :unprocessable_entity

@@ -1,5 +1,5 @@
 class CodeBlocksController < ApplicationController
-  before_action :set_code_blockable, except: [:direct_destroy]
+  before_action :set_code_blockable, except: [:direct_destroy, :update]
   before_action :set_code_block, only: [:show, :update, :destroy]
 
   def index
@@ -24,7 +24,11 @@ class CodeBlocksController < ApplicationController
 
   def update
     if @code_block.update(code_block_params)
-      render json: @code_block
+      render json: {
+        id: @code_block.id,
+        content: @code_block.content,
+        position: @code_block.position
+      }
     else
       render json: @code_block.errors, status: :unprocessable_entity
     end
@@ -59,7 +63,7 @@ class CodeBlocksController < ApplicationController
   end
 
   def set_code_block
-    @code_block = @code_blockable.code_blocks.find(params[:id])
+    @code_block = CodeBlock.find(params[:id])
   end
 
   def code_block_params
