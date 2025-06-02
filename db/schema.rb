@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2025_06_01_055044) do
+ActiveRecord::Schema[7.0].define(version: 2025_06_01_055045) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -94,6 +94,9 @@ ActiveRecord::Schema[7.0].define(version: 2025_06_01_055044) do
     t.string "title", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "answerable_type"
+    t.bigint "answerable_id"
+    t.index ["answerable_type", "answerable_id"], name: "index_code_comparisons_on_answerable"
   end
 
   create_table "code_flow_elements", force: :cascade do |t|

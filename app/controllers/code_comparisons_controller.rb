@@ -1,5 +1,5 @@
 class CodeComparisonsController < ApplicationController
-  before_action :set_code_comparison, only: [:show, :update, :destroy]
+  before_action :set_code_comparison, only: [:show, :update, :destroy, :answerable, :attach_answerable, :detach_answerable]
 
   def index
     @code_comparisons = CodeComparison.includes(:code_blocks).all
@@ -43,7 +43,8 @@ class CodeComparisonsController < ApplicationController
         tags: comparison.tags,
         code_blocks: comparison.code_blocks.order(:position).map { |block| 
           { content: block.content }
-        }
+        },
+        answerable: comparison.answerable
       }
     else
       # If no comparisons exist, generate a new one
@@ -109,6 +110,55 @@ class CodeComparisonsController < ApplicationController
     rescue StandardError => e
       render json: { error: "Failed to generate code comparison: #{e.message}" }, status: :unprocessable_entity
     end
+  end
+
+  # GET /code_comparisons/:id/answerable
+  def answerable
+    if @code_comparison.answerable
+      render json: {
+        id: @code_comparison.answerable_id,
+        type: @code_comparison.answerable_type,
+        title: @code_comparison.answerable.title,
+        description: @code_comparison.answerable.description
+      }
+    else
+      head :no_content
+    end
+  end
+
+  # POST /code_comparisons/:id/attach_answerable
+  def attach_answerable
+    answerable_type = params[:answerable_type].classify
+    answerable_id = params[:answerable_id]
+
+    # Validate answerable type
+    unless ['Skill', 'Wonder'].include?(answerable_type)
+      render json: { error: "Invalid answerable type" }, status: :unprocessable_entity
+      return
+    end
+
+    # Find the answerable object
+    begin
+      answerable = answerable_type.constantize.find(answerable_id)
+      @code_comparison.update!(answerable: answerable)
+      
+      render json: {
+        id: answerable.id,
+        type: answerable_type,
+        title: answerable.title,
+        description: answerable.description
+      }
+    rescue ActiveRecord::RecordNotFound
+      render json: { error: "#{answerable_type} not found" }, status: :not_found
+    rescue => e
+      render json: { error: e.message }, status: :unprocessable_entity
+    end
+  end
+
+  # DELETE /code_comparisons/:id/detach_answerable
+  def detach_answerable
+    @code_comparison.update!(answerable: nil)
+    head :no_content
   end
 
   private

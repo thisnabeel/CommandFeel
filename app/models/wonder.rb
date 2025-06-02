@@ -5,6 +5,7 @@ class Wonder < ApplicationRecord
 
   has_many :wonders, dependent: :destroy
   has_many :quests, as: :questable, dependent: :destroy
+  has_many :code_comparisons, as: :answerable, dependent: :nullify
 
   has_many :abstractions, as: :abstractable, dependent: :destroy
   has_many :challenges, as: :challengeable, dependent: :destroy

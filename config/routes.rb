@@ -202,6 +202,12 @@ Rails.application.routes.draw do
   end
 
   resources :code_comparisons do
+    member do
+      get :answerable
+      post :attach_answerable
+      delete :detach_answerable
+    end
+
     collection do
       get :arcade
       post :generate_solid_comparison
