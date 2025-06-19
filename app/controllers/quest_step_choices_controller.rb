@@ -1,5 +1,5 @@
 class QuestStepChoicesController < ApplicationController
-  before_action :set_quest_step
+  before_action :set_quest_step, except: [:update]
   before_action :set_choice, only: [:show, :update, :destroy]
 
   def index
@@ -41,10 +41,14 @@ class QuestStepChoicesController < ApplicationController
   end
 
   def set_choice
-    @choice = @quest_step.quest_step_choices.find(params[:id])
+    if @quest_step.present?
+      @choice = @quest_step.quest_step_choices.find(params[:id])
+    else
+      @choice = QuestStepChoice.find(params[:id])
+    end
   end
 
   def choice_params
-    params.require(:quest_step_choice).permit(:body, :status, :position, :reasoning)
+    params.require(:quest_step_choice).permit(:body, :status, :position, :reasoning, :next_step_id)
   end
 end 

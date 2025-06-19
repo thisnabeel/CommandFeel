@@ -1,10 +1,14 @@
 class QuestsController < ApplicationController
-  before_action :set_skill, except: [:show, :quest_wizard, :popular]
+  before_action :set_skill, except: [:show, :quest_wizard, :popular, :by_code]
   before_action :set_quest, only: [:show, :update, :destroy, :quest_wizard]
 
   def index
-    @quests = @skill.quests
-    render json: @quests
+    if @skill.present?
+      @quests = @skill.quests
+    else
+      @quests = Quest.where(questable_id: nil)
+    end
+    render json: @quests, each_serializer: QuestSerializer, include_choices: true
   end
 
   def show
@@ -14,9 +18,9 @@ class QuestsController < ApplicationController
   end
 
   def create
-    @quest = @skill.quests.build(quest_params)
+    @quest = Quest.new(quest_params)
 
-    if @quest.save
+    if @quest.save!
       render json: @quest, status: :created
     else
       render json: @quest.errors, status: :unprocessable_entity
@@ -135,10 +139,30 @@ class QuestsController < ApplicationController
     render json: { error: e.message }, status: :unprocessable_entity
   end
 
+  # GET /quests/by_code?code=quest_code
+  def by_code
+    code = params[:code]
+    
+    if code.blank?
+      render json: { error: "Code parameter is required" }, status: :bad_request
+      return
+    end
+
+    @quest = Quest.find_by(code: code)
+    
+    if @quest
+      render json: @quest, each_serializer: QuestSerializer, include_choices: true
+    else
+      render json: { error: "Quest not found with code: #{code}" }, status: :not_found
+    end
+  end
+
   private
 
   def set_skill
-    @skill = Skill.find(params[:skill_id])
+    if params[:skill_id].present?
+      @skill = Skill.find(params[:skill_id])
+    end
   end
 
   def set_quest

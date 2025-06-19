@@ -1,10 +1,10 @@
 class Quest < ApplicationRecord
-  belongs_to :questable, polymorphic: true
+  belongs_to :questable, polymorphic: true, optional: true
   has_many :quest_steps, dependent: :destroy
 
   validates :title, presence: true
-  validates :position, presence: true, numericality: { only_integer: true }
-  validates :difficulty, presence: true, numericality: { only_integer: true }
+  # validates :position, numericality: { only_integer: true }
+  # validates :difficulty, numericality: { only_integer: true }
 
   def self.popular(limit = 10)
     quests = Quest.includes(quest_steps: :quest_step_choices)

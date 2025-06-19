@@ -3,6 +3,7 @@ class QuestStep < ApplicationRecord
   belongs_to :success_step, class_name: 'QuestStep', optional: true
   belongs_to :failure_step, class_name: 'QuestStep', optional: true
   has_many :quest_step_choices, -> { order(position: :asc) }, dependent: :destroy
+  has_many :previous_choices, class_name: 'QuestStepChoice', foreign_key: 'next_step_id'
 
   validates :position, presence: true, numericality: { only_integer: true }
   validates :body, presence: true

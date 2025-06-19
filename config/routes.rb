@@ -26,6 +26,9 @@ Rails.application.routes.draw do
     member do
       post 'quest_wizard'  # POST /quests/:id/quest_wizard
     end
+    collection do
+      get :by_code
+    end
   end
 
   # Direct route for quest steps and their choices
@@ -48,6 +51,7 @@ Rails.application.routes.draw do
     end
     resources :phrases, only: [:index, :create, :destroy], controller: 'phrases'
     resources :tags, only: [:index, :create, :destroy], controller: 'tags'
+    resources :challenges, only: [:index], controller: 'skills/challenges'
   end
 
   resources :quests do
@@ -163,7 +167,13 @@ Rails.application.routes.draw do
   get "/programming_languages/:programming_language_id/traits/:trait_id" => "programming_language_traits#find"
 
   post "/execute_code" => "algorithms#execute_code"
-  resources :challenges
+  resources :challenges do
+    resources :resume_points, only: [:index, :show, :create, :update, :destroy] do
+      collection do
+        get :wizard
+      end
+    end
+  end
   resources :abstractions
   resources :skills
   resources :chapters
@@ -237,6 +247,8 @@ Rails.application.routes.draw do
 
   # Direct routes for code blocks
   resources :code_blocks, only: [:update, :destroy]
+
+  resources :quest_step_choices, only: [:show, :update, :destroy]
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

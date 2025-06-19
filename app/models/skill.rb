@@ -151,11 +151,12 @@ class Skill < ApplicationRecord
 
 	def generate_challenge
 
-		prompt = '
+		prompt = "
 			give me a challenge I can do as one person wiht minimal tools that proves i understand #{self.title}.
 			Make sure it\'s different from the questions: #{self.challenges.pluck(:title).join(", ")}.
-			give me as json format: {tweet_sized_title:, instructions:}'
-		res = ChatGpt.send(prompt)
+			give me as json format: {tweet_sized_title:, instructions: Text(HTML ol list)}"
+		res = WizardService.ask(prompt)
+		puts "res: #{res}"
 		challenge = Challenge.create(
 			challengeable_type: "Skill",
 			challengeable_id: self.id,

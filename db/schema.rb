@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2025_06_01_055045) do
+ActiveRecord::Schema[7.0].define(version: 2025_06_18_013539) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -289,6 +289,8 @@ ActiveRecord::Schema[7.0].define(version: 2025_06_01_055045) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.text "reasoning"
+    t.bigint "next_step_id"
+    t.index ["next_step_id"], name: "index_quest_step_choices_on_next_step_id"
     t.index ["quest_step_id"], name: "index_quest_step_choices_on_quest_step_id"
   end
 
@@ -316,6 +318,7 @@ ActiveRecord::Schema[7.0].define(version: 2025_06_01_055045) do
     t.datetime "updated_at", null: false
     t.string "questable_type"
     t.bigint "questable_id"
+    t.string "code"
     t.index ["questable_type", "questable_id"], name: "index_quests_on_questable_type_and_questable_id"
   end
 
@@ -350,6 +353,16 @@ ActiveRecord::Schema[7.0].define(version: 2025_06_01_055045) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "quiz_set_id"
+  end
+
+  create_table "resume_points", force: :cascade do |t|
+    t.text "body", null: false
+    t.bigint "challenge_id", null: false
+    t.integer "position", default: 1
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["challenge_id", "position"], name: "index_resume_points_on_challenge_id_and_position"
+    t.index ["challenge_id"], name: "index_resume_points_on_challenge_id"
   end
 
   create_table "saved_jobs", force: :cascade do |t|
@@ -535,8 +548,10 @@ ActiveRecord::Schema[7.0].define(version: 2025_06_01_055045) do
   add_foreign_key "project_requirement_tools", "project_requirements"
   add_foreign_key "project_requirements", "wonders"
   add_foreign_key "quest_step_choices", "quest_steps"
+  add_foreign_key "quest_step_choices", "quest_steps", column: "next_step_id"
   add_foreign_key "quest_steps", "quests"
   add_foreign_key "quiz_choices", "quizzes"
+  add_foreign_key "resume_points", "challenges"
   add_foreign_key "skills", "skills"
   add_foreign_key "taggings", "tags"
   add_foreign_key "wonder_infrastructure_patterns", "infrastructure_patterns"
