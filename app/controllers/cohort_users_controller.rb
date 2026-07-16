@@ -71,7 +71,8 @@ class CohortUsersController < ApplicationController
 
   def apply
     if @cohort_user.apply!(current_user)
-      render json: @cohort_user, serializer: CohortUserSerializer
+      seat = CohortUser.includes(:occupation, cohort: :cohort_sprints).find(@cohort_user.id)
+      render json: seat, serializer: CohortUserSerializer
     else
       render json: { errors: @cohort_user.errors.full_messages }, status: :unprocessable_entity
     end
