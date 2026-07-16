@@ -52,6 +52,7 @@ Rails.application.routes.draw do
     resources :phrases, only: [:index, :create, :destroy], controller: 'phrases'
     resources :tags, only: [:index, :create, :destroy], controller: 'tags'
     resources :challenges, only: [:index], controller: 'skills/challenges'
+    resources :skill_histories, only: [:index, :create]
   end
 
   resources :quests do
@@ -110,6 +111,8 @@ Rails.application.routes.draw do
 
   post "/upload_avatar" => "users#upload_avatar"
   post "/users/find_by_username" => "users#find_by_username"
+  patch "/users/profile" => "users#update_profile"
+  put "/users/profile" => "users#update_profile"
 
   post "/trade_offs/make" => "trade_offs#make"
 
@@ -154,6 +157,7 @@ Rails.application.routes.draw do
   post "/skills/generate_quiz" => "skills#generate_quiz"
   post "/skills/generate_challenge" => "skills#generate_challenge"
   post "/skills/generate_abstraction" => "skills#generate_abstraction"
+  post "/skills/generate_history" => "skills#generate_history"
   post "/infrastructure_patterns/generate" => "infrastructure_patterns#generate_patterns"
 
   # devise_for :users, controllers: {
@@ -175,8 +179,63 @@ Rails.application.routes.draw do
     end
   end
   resources :abstractions
+  resources :skill_histories, only: [:show, :update, :destroy]
   resources :skills
   resources :chapters
+
+  resources :occupations do
+    resources :occupation_skills, only: %i[index create]
+    get 'my_notes', to: 'occupation_skill_user_notes#for_occupation'
+    get 'my_approved_evidences', to: 'occupation_skill_evidences#approved_for_occupation'
+    get 'unresolved_question_counts', to: 'questions#unresolved_counts_for_occupation'
+  end
+  resources :occupation_skills, only: %i[show update destroy] do
+    resources :occupation_skill_user_notes, only: %i[index create]
+    resources :occupation_skill_evidences, only: %i[index create]
+    get 'questions', to: 'questions#for_occupation_skill'
+  end
+  resources :occupation_skill_user_notes, only: %i[update destroy]
+  resources :occupation_skill_evidences, only: %i[update destroy] do
+    collection do
+      get :pending
+      get :mine_approved
+    end
+    member do
+      post :resume_bullet
+    end
+  end
+  resources :evidence_bullets, only: %i[update destroy]
+  resources :questions, only: %i[show create] do
+    collection do
+      get :mine
+      get :cohort_unresolved
+    end
+    member do
+      post :resolve
+    end
+    resources :question_comments, only: %i[create]
+  end
+  resources :cohorts do
+    resources :cohort_sprints, only: %i[index create]
+    member do
+      post :enter_as_admin
+    end
+  end
+  resources :cohort_sprints, only: %i[show update destroy] do
+    member do
+      post :activate
+    end
+  end
+  resources :cohort_users do
+    collection do
+      get :mine
+    end
+    member do
+      post :apply
+    end
+  end
+
+  resources :feature_flags
 
   namespace :admin do
     resources :job_statuses, only: [:index, :show]

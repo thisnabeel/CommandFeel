@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2025_06_18_013539) do
+ActiveRecord::Schema[7.0].define(version: 2026_07_16_220000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -25,6 +25,8 @@ ActiveRecord::Schema[7.0].define(version: 2025_06_18_013539) do
     t.text "body"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "level", default: 0, null: false
+    t.index ["abstractable_type", "abstractable_id", "level"], name: "index_abstractions_on_abstractable_and_level"
   end
 
   create_table "algorithms", force: :cascade do |t|
@@ -106,6 +108,42 @@ ActiveRecord::Schema[7.0].define(version: 2025_06_18_013539) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "cohort_sprints", force: :cascade do |t|
+    t.bigint "cohort_id", null: false
+    t.integer "position", null: false
+    t.text "goal", default: "", null: false
+    t.boolean "active", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["cohort_id", "active"], name: "index_cohort_sprints_on_cohort_id_and_active"
+    t.index ["cohort_id", "position"], name: "index_cohort_sprints_on_cohort_id_and_position", unique: true
+    t.index ["cohort_id"], name: "index_cohort_sprints_on_cohort_id"
+  end
+
+  create_table "cohort_users", force: :cascade do |t|
+    t.bigint "cohort_id", null: false
+    t.bigint "user_id"
+    t.bigint "occupation_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "status", default: "open", null: false
+    t.index ["cohort_id", "user_id"], name: "index_cohort_users_on_cohort_id_and_user_id_unique", unique: true, where: "(user_id IS NOT NULL)"
+    t.index ["cohort_id"], name: "index_cohort_users_on_cohort_id"
+    t.index ["occupation_id"], name: "index_cohort_users_on_occupation_id"
+    t.index ["user_id"], name: "index_cohort_users_on_user_id"
+  end
+
+  create_table "cohorts", force: :cascade do |t|
+    t.date "start_date"
+    t.date "end_date"
+    t.string "title"
+    t.string "subtitle"
+    t.string "video_url"
+    t.text "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "comprehension_questions", force: :cascade do |t|
     t.bigint "leetcode_problem_id", null: false
     t.text "question"
@@ -114,6 +152,25 @@ ActiveRecord::Schema[7.0].define(version: 2025_06_18_013539) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["leetcode_problem_id"], name: "index_comprehension_questions_on_leetcode_problem_id"
+  end
+
+  create_table "evidence_bullets", force: :cascade do |t|
+    t.bigint "occupation_skill_evidence_id", null: false
+    t.text "body", null: false
+    t.integer "position", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["occupation_skill_evidence_id", "position"], name: "index_evidence_bullets_on_evidence_and_position"
+    t.index ["occupation_skill_evidence_id"], name: "index_evidence_bullets_on_occupation_skill_evidence_id"
+  end
+
+  create_table "feature_flags", force: :cascade do |t|
+    t.string "key", null: false
+    t.boolean "enabled", default: false, null: false
+    t.string "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["key"], name: "index_feature_flags_on_key", unique: true
   end
 
   create_table "infrastructure_pattern_dependencies", force: :cascade do |t|
@@ -173,6 +230,58 @@ ActiveRecord::Schema[7.0].define(version: 2025_06_18_013539) do
     t.string "difficulty"
     t.string "url"
     t.string "topics"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "occupation_skill_evidences", force: :cascade do |t|
+    t.text "body", null: false
+    t.boolean "approved", default: false, null: false
+    t.text "comment"
+    t.bigint "user_id", null: false
+    t.bigint "occupation_skill_id", null: false
+    t.bigint "cohort_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["cohort_id"], name: "index_occupation_skill_evidences_on_cohort_id"
+    t.index ["occupation_skill_id", "user_id"], name: "index_evidences_on_skill_and_user"
+    t.index ["occupation_skill_id"], name: "index_occupation_skill_evidences_on_occupation_skill_id"
+    t.index ["user_id"], name: "index_occupation_skill_evidences_on_user_id"
+  end
+
+  create_table "occupation_skill_user_notes", force: :cascade do |t|
+    t.text "body"
+    t.bigint "user_id", null: false
+    t.bigint "occupation_skill_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["occupation_skill_id"], name: "index_occupation_skill_user_notes_on_occupation_skill_id"
+    t.index ["user_id", "occupation_skill_id"], name: "index_os_user_notes_on_user_and_occupation_skill", unique: true
+    t.index ["user_id"], name: "index_occupation_skill_user_notes_on_user_id"
+  end
+
+  create_table "occupation_skills", force: :cascade do |t|
+    t.bigint "occupation_id", null: false
+    t.bigint "skill_id"
+    t.text "description"
+    t.string "video_url"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "title"
+    t.bigint "occupation_skill_id"
+    t.integer "position"
+    t.index ["occupation_id", "occupation_skill_id", "position"], name: "index_occupation_skills_on_parent_and_position"
+    t.index ["occupation_id", "skill_id"], name: "index_occupation_skills_on_occupation_id_and_skill_id", unique: true
+    t.index ["occupation_id"], name: "index_occupation_skills_on_occupation_id"
+    t.index ["occupation_skill_id"], name: "index_occupation_skills_on_occupation_skill_id"
+    t.index ["skill_id"], name: "index_occupation_skills_on_skill_id"
+  end
+
+  create_table "occupations", force: :cascade do |t|
+    t.string "title"
+    t.string "subtitle"
+    t.text "description"
+    t.string "average_salary_range"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -308,6 +417,33 @@ ActiveRecord::Schema[7.0].define(version: 2025_06_18_013539) do
     t.index ["quest_id"], name: "index_quest_steps_on_quest_id"
   end
 
+  create_table "question_comments", force: :cascade do |t|
+    t.text "body", null: false
+    t.bigint "question_id", null: false
+    t.bigint "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["question_id"], name: "index_question_comments_on_question_id"
+    t.index ["user_id"], name: "index_question_comments_on_user_id"
+  end
+
+  create_table "questions", force: :cascade do |t|
+    t.text "body", null: false
+    t.bigint "user_id", null: false
+    t.bigint "last_comment_by_id"
+    t.string "questionable_type", null: false
+    t.bigint "questionable_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.boolean "resolved", default: false, null: false
+    t.datetime "resolved_at"
+    t.bigint "resolved_by_id"
+    t.index ["last_comment_by_id"], name: "index_questions_on_last_comment_by_id"
+    t.index ["questionable_type", "questionable_id"], name: "index_questions_on_questionable_type_and_questionable_id"
+    t.index ["resolved_by_id"], name: "index_questions_on_resolved_by_id"
+    t.index ["user_id"], name: "index_questions_on_user_id"
+  end
+
   create_table "quests", force: :cascade do |t|
     t.string "title"
     t.text "description"
@@ -392,6 +528,14 @@ ActiveRecord::Schema[7.0].define(version: 2025_06_18_013539) do
     t.string "youtube_title"
     t.index ["position"], name: "index_scripts_on_position"
     t.index ["scriptable_type", "scriptable_id"], name: "index_scripts_on_scriptable_type_and_scriptable_id"
+  end
+
+  create_table "skill_histories", force: :cascade do |t|
+    t.text "body"
+    t.bigint "skill_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["skill_id"], name: "index_skill_histories_on_skill_id"
   end
 
   create_table "skills", force: :cascade do |t|
@@ -505,6 +649,8 @@ ActiveRecord::Schema[7.0].define(version: 2025_06_18_013539) do
     t.string "authentication_token", limit: 30
     t.string "avatar_source_url"
     t.string "avatar_cropped_url"
+    t.string "first_name"
+    t.string "last_name"
     t.index ["authentication_token"], name: "index_users_on_authentication_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
@@ -542,16 +688,35 @@ ActiveRecord::Schema[7.0].define(version: 2025_06_18_013539) do
   end
 
   add_foreign_key "chapters", "chapters"
+  add_foreign_key "cohort_sprints", "cohorts"
+  add_foreign_key "cohort_users", "cohorts"
+  add_foreign_key "cohort_users", "occupations"
+  add_foreign_key "cohort_users", "users"
   add_foreign_key "comprehension_questions", "leetcode_problems"
+  add_foreign_key "evidence_bullets", "occupation_skill_evidences"
   add_foreign_key "infrastructure_pattern_dependencies", "infrastructure_patterns"
+  add_foreign_key "occupation_skill_evidences", "cohorts"
+  add_foreign_key "occupation_skill_evidences", "occupation_skills"
+  add_foreign_key "occupation_skill_evidences", "users"
+  add_foreign_key "occupation_skill_user_notes", "occupation_skills"
+  add_foreign_key "occupation_skill_user_notes", "users"
+  add_foreign_key "occupation_skills", "occupation_skills"
+  add_foreign_key "occupation_skills", "occupations"
+  add_foreign_key "occupation_skills", "skills"
   add_foreign_key "phrase_links", "phrases"
   add_foreign_key "project_requirement_tools", "project_requirements"
   add_foreign_key "project_requirements", "wonders"
   add_foreign_key "quest_step_choices", "quest_steps"
   add_foreign_key "quest_step_choices", "quest_steps", column: "next_step_id"
   add_foreign_key "quest_steps", "quests"
+  add_foreign_key "question_comments", "questions"
+  add_foreign_key "question_comments", "users"
+  add_foreign_key "questions", "users"
+  add_foreign_key "questions", "users", column: "last_comment_by_id"
+  add_foreign_key "questions", "users", column: "resolved_by_id"
   add_foreign_key "quiz_choices", "quizzes"
   add_foreign_key "resume_points", "challenges"
+  add_foreign_key "skill_histories", "skills"
   add_foreign_key "skills", "skills"
   add_foreign_key "taggings", "tags"
   add_foreign_key "wonder_infrastructure_patterns", "infrastructure_patterns"

@@ -12,12 +12,6 @@ module Admin
       render json: @job_status
     end
 
-    private
-
-    def ensure_admin
-      unless User.is_admin?(current_user)
-        render json: { error: 'Unauthorized' }, status: :unauthorized
-      end
-    end
   end
-end 
+end
+ 

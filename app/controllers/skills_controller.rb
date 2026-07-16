@@ -1,5 +1,5 @@
 class SkillsController < ApplicationController
-  before_action :set_skill, only: %i[ show update destroy generate_quiz generate_challenge generate_abstraction]
+  before_action :set_skill, only: %i[ show update destroy generate_quiz generate_challenge generate_abstraction generate_history]
 
   # GET /skills
   def index
@@ -13,7 +13,8 @@ class SkillsController < ApplicationController
     render json: @skill, serializer: SkillSerializer, serializer_options: { 
       abstractions: true,
       challenges: true,
-      quizzes: true
+      quizzes: true,
+      skill_histories: true
     }
   end
   
@@ -27,8 +28,13 @@ class SkillsController < ApplicationController
 
 
   def generate_abstraction
-    render json: @skill.generate_abstraction, serializer: AbstractionSerializer
+    level = params[:level].presence || 0
+    render json: @skill.generate_abstraction(level), serializer: AbstractionSerializer
 	end
+
+  def generate_history
+    render json: @skill.generate_history, serializer: SkillHistorySerializer
+  end
 
   # POST /skills
   def create

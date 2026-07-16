@@ -13,41 +13,28 @@ class Users::SessionsController < ApplicationController
     puts "User Present by: #{user.present?}"
     if user.present? && user.valid_password?(params[:user][:password])
       generated_token = user.generate_temporary_authentication_token
-      render json: user.attributes.merge(
-        :admin => user.admin?, 
-        generated_token: generated_token, 
-      )
-      # user.generate_temporary_authentication_token
-      # render json: user.as_json(only: [:id, :email, :authentication_token]), status: :created
+      render json: user_payload(user, generated_token)
     else
-      user = User.create!(user_params)
+      user = User.new(user_params)
+      unless user.save
+        return render json: { errors: user.errors.full_messages }, status: :unprocessable_entity
+      end
+
       generated_token = user.generate_temporary_authentication_token
-      render json: user.attributes.merge(
-        :admin => user.admin?, 
-        generated_token: generated_token, 
-      )
+      render json: user_payload(user, generated_token), status: :created
     end
-
-
   end
-
 
   # POST /resource/sign_in
   def create
-      user = User.find_by(email: params[:login]) || User.find_by(username: params[:login])
+    user = User.find_by(email: params[:login]) || User.find_by(username: params[:login])
 
-      if user.present? && user.valid_password?(params[:password])
-        generated_token = user.generate_temporary_authentication_token
-        render json: user.attributes.merge(
-          :admin => user.admin?, 
-          generated_token: generated_token, 
-        )
-        # user.generate_temporary_authentication_token
-        # render json: user.as_json(only: [:id, :email, :authentication_token]), status: :created
-      else
-        head(:unauthorized)
-      end
-
+    if user.present? && user.valid_password?(params[:password])
+      generated_token = user.generate_temporary_authentication_token
+      render json: user_payload(user, generated_token)
+    else
+      head(:unauthorized)
+    end
   end
 
   # DELETE /resource/sign_out
@@ -68,11 +55,18 @@ class Users::SessionsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
 
+  def user_payload(user, token)
+    user.attributes.merge(
+      admin: user.admin?,
+      generated_token: token,
+      name_complete: user.name_complete?
+    )
+  end
 
-    # Only allow a list of trusted parameters through.
-    def user_params
-      params.require(:user).permit!
-    end
+  def user_params
+    params.require(:user).permit(
+      :username, :email, :password, :password_confirmation, :first_name, :last_name
+    )
+  end
 end

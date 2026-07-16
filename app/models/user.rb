@@ -11,6 +11,26 @@ class User < ApplicationRecord
   has_many :proofs
   has_many :proof_links
   has_many :projects
+  has_many :cohort_users
+  has_many :cohorts, through: :cohort_users
+  has_many :occupation_skill_user_notes, dependent: :destroy
+  has_many :questions, dependent: :destroy
+  has_many :question_comments, dependent: :destroy
+  has_many :occupation_skill_evidences, dependent: :destroy
+
+  validates :first_name, :last_name, presence: true, on: :create
+  validates :first_name, :last_name, presence: true, if: :validating_name_fields?
+
+  def name_complete?
+    first_name.present? && last_name.present?
+  end
+
+  def display_first_name
+    return first_name.strip if first_name.present?
+
+    token = (username.presence || email.to_s.split('@').first).to_s.split(/[\s._-]+/).first
+    token.present? ? token.capitalize : 'there'
+  end
 
   def generate_temporary_authentication_token
     # self.authentication_token = Devise.friendly_token
@@ -126,5 +146,11 @@ class User < ApplicationRecord
     rescue => e
       Rails.logger.error "Failure with S3 call. Details: #{e}; #{e.backtrace}"
       return false
+  end
+
+  private
+
+  def validating_name_fields?
+    will_save_change_to_first_name? || will_save_change_to_last_name?
   end
 end

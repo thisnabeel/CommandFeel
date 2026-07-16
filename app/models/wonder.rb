@@ -173,18 +173,70 @@ class Wonder < ApplicationRecord
 		return challenge
 	end
 
-	def generate_abstraction
-		prompt = <<~PROMPT
+	def generate_abstraction(level = 0)
+		level = level.to_i
+		level = 0 unless (0..2).include?(level)
+
+		prompt = abstraction_prompt_for_level(level)
+
+		response = ChatGpt.send(prompt)
+
+		# Parse the JSON from the content field - it's in the answer field and between ```json markers
+		json_content = response["answer"].match(/```json\n(.*?)\n```/m)[1]
+		abstraction_data = JSON.parse(json_content)
+
+		abstraction = Abstraction.create!(
+			abstractable_type: "Wonder",
+			abstractable_id: self.id,
+			body: abstraction_data["body"],
+			level: level
+		)
+
+		return abstraction
+	rescue JSON::ParserError => e
+		Rails.logger.error("Failed to parse ChatGPT response: #{e.message}")
+		raise
+	rescue StandardError => e
+		Rails.logger.error("Error generating abstraction: #{e.message}")
+		raise
+	end
+
+	private
+
+	def abstraction_prompt_for_level(level)
+		instructions = case level
+		when 1
+			<<~INSTRUCTIONS.strip
+				- Stay in the domain of tech (computers, software, apps, the web) — do not use non-tech real-world analogies
+				- Explain for someone new to tech using approachable tech concepts
+				- Basic computer terms are OK (files, folders, apps, clicking, browsers)
+				- Keep it concrete and under 280 characters
+				- Avoid deep developer jargon
+			INSTRUCTIONS
+		when 2
+			<<~INSTRUCTIONS.strip
+				- Explain the concept for a developer or adjacent technical reader
+				- Precise technical jargon is OK
+				- Be accurate and direct; prefer clarity over analogy
+				- Keep the explanation under 280 characters
+			INSTRUCTIONS
+		else
+			<<~INSTRUCTIONS.strip
+				- Create a simple, real-world analogy that explains the concept
+				- Use everyday examples that anyone can understand
+				- Keep the explanation under 280 characters
+				- Make it ELI5 (Explain Like I'm 5) friendly
+				- Avoid technical jargon
+			INSTRUCTIONS
+		end
+
+		<<~PROMPT
 			You are generating an analogy/abstraction for a computer science concept.
 
 			Concept: #{self.title}
 
 			INSTRUCTIONS:
-			- Create a simple, real-world analogy that explains the concept
-			- Use everyday examples that anyone can understand
-			- Keep the explanation under 280 characters
-			- Make it ELI5 (Explain Like I'm 5) friendly
-			- Avoid technical jargon
+			#{instructions}
 
 			OUTPUT:
 			Strictly return valid JSON, formatted like this:
@@ -197,25 +249,5 @@ class Wonder < ApplicationRecord
 
 			Do NOT include any explanation outside the JSON block.
 		PROMPT
-
-		response = ChatGpt.send(prompt)
-		
-		# Parse the JSON from the content field - it's in the answer field and between ```json markers
-		json_content = response["answer"].match(/```json\n(.*?)\n```/m)[1]
-		abstraction_data = JSON.parse(json_content)
-		
-		abstraction = Abstraction.create!(
-			abstractable_type: "Wonder",
-			abstractable_id: self.id,
-			body: abstraction_data["body"]
-		)
-		
-		return abstraction
-	rescue JSON::ParserError => e
-		Rails.logger.error("Failed to parse ChatGPT response: #{e.message}")
-		raise
-	rescue StandardError => e
-		Rails.logger.error("Error generating abstraction: #{e.message}")
-		raise
 	end
 end

@@ -50,8 +50,9 @@ class WondersController < ApplicationController
   end
 
   def generate_abstraction
-    abstraction = @wonder.generate_abstraction
-    render json: abstraction
+    level = params[:level].presence || 0
+    abstraction = @wonder.generate_abstraction(level)
+    render json: abstraction, serializer: AbstractionSerializer
   end
 
   def arcade

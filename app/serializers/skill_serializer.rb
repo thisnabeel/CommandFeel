@@ -6,6 +6,7 @@ class SkillSerializer < ActiveModel::Serializer
   attributes :challenges
   # attributes :quizzes
   attributes :quiz_sets
+  attributes :skill_histories
 
 
   def options
@@ -45,6 +46,14 @@ class SkillSerializer < ActiveModel::Serializer
       return ActiveModel::Serializer::CollectionSerializer.new(@object.quiz_sets, serializer: QuizSetSerializer)
     else
       return []
+    end
+  end
+
+  def skill_histories
+    if options && options[:skill_histories] === true
+      object.skill_histories.order(created_at: :desc)
+    else
+      []
     end
   end
 

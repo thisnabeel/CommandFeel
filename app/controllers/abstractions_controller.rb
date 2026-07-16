@@ -46,6 +46,10 @@ class AbstractionsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def abstraction_params
-      params.require(:abstraction).permit(:abstractable_id, :abstractable_type, :article, :last_edited_by, :preview, :position, :source_url, :body)
+      raw = params[:abstraction].present? ? params.require(:abstraction) : params
+      raw.permit(
+        :abstractable_id, :abstractable_type, :article, :last_edited_by,
+        :preview, :position, :source_url, :body, :level
+      )
     end
 end
