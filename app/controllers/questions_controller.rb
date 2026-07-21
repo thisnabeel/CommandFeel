@@ -27,12 +27,17 @@ class QuestionsController < ApplicationController
 
   # GET /questions/mine?cohort_user_id=
   def mine
-    seat = current_user.cohort_users.find(params[:cohort_user_id])
+    seat = find_mine_seat!
+    subject = seat.user
+    unless subject
+      return render json: { error: 'Seat has no user' }, status: :unprocessable_entity
+    end
+
     skill_ids = OccupationSkill.where(occupation_id: seat.occupation_id).pluck(:id)
 
     questions = Question
                 .includes(:user, :last_comment_by, :question_comments, :questionable)
-                .where(user: current_user)
+                .where(user: subject)
                 .where(
                   '(questionable_type = ? AND questionable_id = ?) OR (questionable_type = ? AND questionable_id IN (?))',
                   'CohortUser', seat.id,
@@ -168,5 +173,13 @@ class QuestionsController < ApplicationController
     return true if question.user_id == current_user.id
 
     false
+  end
+
+  def find_mine_seat!
+    seat = CohortUser.find(params[:cohort_user_id])
+    return seat if User.is_admin?(current_user)
+    return seat if seat.user_id == current_user.id
+
+    raise ActiveRecord::RecordNotFound
   end
 end

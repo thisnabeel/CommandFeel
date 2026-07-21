@@ -4,11 +4,16 @@ class OccupationSkillUserNotesController < ApplicationController
   before_action :set_note, only: %i[update destroy]
 
   # GET /occupations/:occupation_id/my_notes
-  # Returns occupation_skill_ids the current user has non-empty notes for.
+  # Returns occupation_skill_ids the subject user has non-empty notes for.
+  # Admins may pass user_id to inspect another learner.
   def for_occupation
-    notes = current_user.occupation_skill_user_notes
-                        .joins(:occupation_skill)
-                        .where(occupation_skills: { occupation_id: params[:occupation_id] })
+    subject = subject_user_for_read
+    return if performed?
+    return render json: { error: 'User not found' }, status: :not_found unless subject
+
+    notes = subject.occupation_skill_user_notes
+                   .joins(:occupation_skill)
+                   .where(occupation_skills: { occupation_id: params[:occupation_id] })
 
     ids = notes.filter_map do |note|
       plain = note.body.to_s.gsub(/<[^>]*>/, '').strip
@@ -71,5 +76,17 @@ class OccupationSkillUserNotesController < ApplicationController
   def note_params
     raw = params[:occupation_skill_user_note].present? ? params.require(:occupation_skill_user_note) : params
     raw.permit(:body)
+  end
+
+  def subject_user_for_read
+    if params[:user_id].present?
+      unless User.is_admin?(current_user)
+        render json: { error: 'Unauthorized' }, status: :unauthorized
+        return nil
+      end
+      return User.find_by(id: params[:user_id])
+    end
+
+    current_user
   end
 end

@@ -5,6 +5,7 @@ class CohortUser < ApplicationRecord
   belongs_to :user, optional: true
   belongs_to :occupation
   has_many :questions, as: :questionable, dependent: :destroy
+  has_many :cohort_user_jobs, -> { order(:position) }, dependent: :destroy
 
   validates :status, inclusion: { in: STATUSES }
   validate :user_presence_matches_status

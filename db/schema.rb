@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_07_16_220000) do
+ActiveRecord::Schema[7.0].define(version: 2026_07_21_040000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -118,6 +118,19 @@ ActiveRecord::Schema[7.0].define(version: 2026_07_16_220000) do
     t.index ["cohort_id", "active"], name: "index_cohort_sprints_on_cohort_id_and_active"
     t.index ["cohort_id", "position"], name: "index_cohort_sprints_on_cohort_id_and_position", unique: true
     t.index ["cohort_id"], name: "index_cohort_sprints_on_cohort_id"
+  end
+
+  create_table "cohort_user_jobs", force: :cascade do |t|
+    t.bigint "cohort_user_id", null: false
+    t.string "title", null: false
+    t.string "url", null: false
+    t.integer "position", default: 0, null: false
+    t.boolean "archive", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.text "description"
+    t.index ["cohort_user_id", "position"], name: "index_cohort_user_jobs_on_cohort_user_and_position"
+    t.index ["cohort_user_id"], name: "index_cohort_user_jobs_on_cohort_user_id"
   end
 
   create_table "cohort_users", force: :cascade do |t|
@@ -689,6 +702,7 @@ ActiveRecord::Schema[7.0].define(version: 2026_07_16_220000) do
 
   add_foreign_key "chapters", "chapters"
   add_foreign_key "cohort_sprints", "cohorts"
+  add_foreign_key "cohort_user_jobs", "cohort_users"
   add_foreign_key "cohort_users", "cohorts"
   add_foreign_key "cohort_users", "occupations"
   add_foreign_key "cohort_users", "users"

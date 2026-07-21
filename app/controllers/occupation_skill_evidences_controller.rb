@@ -12,28 +12,38 @@ class OccupationSkillEvidencesController < ApplicationController
   end
 
   # GET /occupations/:occupation_id/my_approved_evidences
-  # Returns occupation_skill_ids where the current user has approved evidence.
+  # Returns occupation_skill_ids where the subject user has approved evidence.
+  # Admins may pass user_id to inspect another learner.
   def approved_for_occupation
-    ids = current_user.occupation_skill_evidences
-                      .joins(:occupation_skill)
-                      .where(approved: true, occupation_skills: { occupation_id: params[:occupation_id] })
-                      .distinct
-                      .pluck(:occupation_skill_id)
+    subject = subject_user_for_read
+    return if performed?
+    return render json: { error: 'User not found' }, status: :not_found unless subject
+
+    ids = subject.occupation_skill_evidences
+                 .joins(:occupation_skill)
+                 .where(approved: true, occupation_skills: { occupation_id: params[:occupation_id] })
+                 .distinct
+                 .pluck(:occupation_skill_id)
 
     render json: ids
   end
 
-  # GET /occupation_skill_evidences/mine_approved?occupation_id=&cohort_id=
-  # Learner resume-bullets inbox: own approved evidences with skill/cohort context.
+  # GET /occupation_skill_evidences/mine_approved?occupation_id=&cohort_id=&user_id=
+  # Learner resume-bullets inbox: approved evidences with skill/cohort context.
+  # Admins may pass user_id to inspect another learner.
   def mine_approved
-    scope = current_user.occupation_skill_evidences
-                        .includes(
-                          :cohort,
-                          :evidence_bullets,
-                          occupation_skill: [:skill, :occupation, { occupation_skill: :skill }]
-                        )
-                        .where(approved: true)
-                        .newest_first
+    subject = subject_user_for_read
+    return if performed?
+    return render json: { error: 'User not found' }, status: :not_found unless subject
+
+    scope = subject.occupation_skill_evidences
+                   .includes(
+                     :cohort,
+                     :evidence_bullets,
+                     occupation_skill: [:skill, :occupation, { occupation_skill: :skill }]
+                   )
+                   .where(approved: true)
+                   .newest_first
 
     if params[:occupation_id].present?
       scope = scope.joins(:occupation_skill)
@@ -189,10 +199,6 @@ class OccupationSkillEvidencesController < ApplicationController
       return render json: { error: 'Unauthorized' }, status: :unauthorized
     end
 
-    if !User.is_admin?(current_user) && @evidence.approved?
-      return render json: { error: 'Cannot delete approved evidence' }, status: :unprocessable_entity
-    end
-
     @evidence.destroy
     head :no_content
   end
@@ -235,5 +241,18 @@ class OccupationSkillEvidencesController < ApplicationController
   def admin_params
     raw = params[:occupation_skill_evidence].present? ? params.require(:occupation_skill_evidence) : params
     raw.permit(:body, :approved, :comment)
+  end
+
+  # Admins may pass user_id to read another learner's evidence markers/inbox.
+  def subject_user_for_read
+    if params[:user_id].present?
+      unless User.is_admin?(current_user)
+        render json: { error: 'Unauthorized' }, status: :unauthorized
+        return nil
+      end
+      return User.find_by(id: params[:user_id])
+    end
+
+    current_user
   end
 end

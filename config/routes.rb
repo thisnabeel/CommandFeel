@@ -233,7 +233,9 @@ Rails.application.routes.draw do
     member do
       post :apply
     end
+    resources :cohort_user_jobs, only: %i[index create]
   end
+  resources :cohort_user_jobs, only: %i[update destroy]
 
   resources :feature_flags
 
