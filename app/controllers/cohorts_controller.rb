@@ -1,7 +1,7 @@
 class CohortsController < ApplicationController
-  before_action :ensure_signed_in, only: %i[index show]
+  before_action :ensure_signed_in, only: %i[index show update_description]
   before_action :ensure_admin, only: %i[create update destroy enter_as_admin]
-  before_action :set_cohort, only: %i[show update destroy enter_as_admin]
+  before_action :set_cohort, only: %i[show update destroy enter_as_admin update_description]
 
   def index
     @cohorts = Cohort.includes(:cohort_sprints).order(start_date: :desc)
@@ -63,6 +63,26 @@ class CohortsController < ApplicationController
     end
   end
 
+  # PATCH /cohorts/:id/update_description
+  # Assigned cohort members (and admins) can edit the shared project description.
+  def update_description
+    unless can_edit_cohort_description?
+      return render json: { error: 'Unauthorized' }, status: :unauthorized
+    end
+
+    description = if params[:cohort].present?
+                    params.require(:cohort).permit(:description)[:description]
+                  else
+                    params[:description]
+                  end
+
+    if @cohort.update(description: description)
+      render json: @cohort, serializer: CohortSerializer
+    else
+      render json: { errors: @cohort.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
+
   def destroy
     @cohort.destroy
     head :no_content
@@ -72,6 +92,14 @@ class CohortsController < ApplicationController
 
   def set_cohort
     @cohort = Cohort.includes(:cohort_sprints).find(params[:id])
+  end
+
+  def can_edit_cohort_description?
+    return true if User.is_admin?(current_user)
+
+    current_user.cohort_users
+                .where(cohort_id: @cohort.id, status: 'assigned')
+                .exists?
   end
 
   def cohort_params
