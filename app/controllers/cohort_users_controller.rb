@@ -8,7 +8,12 @@ class CohortUsersController < ApplicationController
     @cohort_users = @cohort_users.where(cohort_id: params[:cohort_id]) if params[:cohort_id].present?
 
     unless User.is_admin?(current_user)
-      @cohort_users = @cohort_users.where(status: 'open')
+      if params[:cohort_id].present? && enrolled_in_cohort?(params[:cohort_id])
+        # Teammates roster for enrolled learners
+        @cohort_users = @cohort_users.where(status: %w[applied assigned]).where.not(user_id: nil)
+      else
+        @cohort_users = @cohort_users.where(status: 'open')
+      end
     end
 
     render json: @cohort_users, each_serializer: CohortUserSerializer
@@ -85,6 +90,12 @@ class CohortUsersController < ApplicationController
 
   def set_cohort_user
     @cohort_user = CohortUser.find(params[:id])
+  end
+
+  def enrolled_in_cohort?(cohort_id)
+    current_user.cohort_users
+                .where(cohort_id: cohort_id, status: %w[applied assigned])
+                .exists?
   end
 
   def create_params
