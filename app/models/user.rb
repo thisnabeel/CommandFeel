@@ -17,6 +17,10 @@ class User < ApplicationRecord
   has_many :questions, dependent: :destroy
   has_many :question_comments, dependent: :destroy
   has_many :occupation_skill_evidences, dependent: :destroy
+  has_many :reported_issues, class_name: 'Issue', foreign_key: :reporter_id, inverse_of: :reporter
+  has_many :assigned_issues, class_name: 'Issue', foreign_key: :assignee_id, dependent: :nullify,
+                             inverse_of: :assignee
+  has_many :issue_histories
 
   validates :first_name, :last_name, presence: true, on: :create
   validates :first_name, :last_name, presence: true, if: :validating_name_fields?

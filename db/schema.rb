@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_07_21_040000) do
+ActiveRecord::Schema[7.0].define(version: 2026_08_06_020001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -155,6 +155,7 @@ ActiveRecord::Schema[7.0].define(version: 2026_07_21_040000) do
     t.text "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "issue_key_prefix", default: "PROJ", null: false
   end
 
   create_table "comprehension_questions", force: :cascade do |t|
@@ -212,6 +213,45 @@ ActiveRecord::Schema[7.0].define(version: 2026_07_21_040000) do
     t.index ["position", "visibility"], name: "idx_ip_on_position_and_visibility"
     t.index ["position"], name: "index_infrastructure_patterns_on_position"
     t.index ["title"], name: "index_infrastructure_patterns_on_title"
+  end
+
+  create_table "issue_histories", force: :cascade do |t|
+    t.bigint "issue_id", null: false
+    t.bigint "user_id", null: false
+    t.string "event", default: "updated", null: false
+    t.jsonb "change_set", default: [], null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["issue_id", "created_at"], name: "index_issue_histories_on_issue_id_and_created_at"
+    t.index ["issue_id"], name: "index_issue_histories_on_issue_id"
+    t.index ["user_id"], name: "index_issue_histories_on_user_id"
+  end
+
+  create_table "issues", force: :cascade do |t|
+    t.bigint "cohort_id", null: false
+    t.integer "number", null: false
+    t.string "issue_type", default: "task", null: false
+    t.string "status", default: "todo", null: false
+    t.string "priority", default: "medium", null: false
+    t.string "title", null: false
+    t.text "description", default: "", null: false
+    t.bigint "cohort_sprint_id"
+    t.bigint "parent_id"
+    t.bigint "reporter_id", null: false
+    t.bigint "assignee_id"
+    t.decimal "backlog_rank", precision: 20, scale: 10, default: "0.0", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["assignee_id"], name: "index_issues_on_assignee_id"
+    t.index ["cohort_id", "backlog_rank"], name: "index_issues_on_cohort_id_and_backlog_rank"
+    t.index ["cohort_id", "cohort_sprint_id"], name: "index_issues_on_cohort_id_and_cohort_sprint_id"
+    t.index ["cohort_id", "issue_type"], name: "index_issues_on_cohort_id_and_issue_type"
+    t.index ["cohort_id", "number"], name: "index_issues_on_cohort_id_and_number", unique: true
+    t.index ["cohort_id", "status"], name: "index_issues_on_cohort_id_and_status"
+    t.index ["cohort_id"], name: "index_issues_on_cohort_id"
+    t.index ["cohort_sprint_id"], name: "index_issues_on_cohort_sprint_id"
+    t.index ["parent_id"], name: "index_issues_on_parent_id"
+    t.index ["reporter_id"], name: "index_issues_on_reporter_id"
   end
 
   create_table "job_statuses", force: :cascade do |t|
@@ -709,6 +749,13 @@ ActiveRecord::Schema[7.0].define(version: 2026_07_21_040000) do
   add_foreign_key "comprehension_questions", "leetcode_problems"
   add_foreign_key "evidence_bullets", "occupation_skill_evidences"
   add_foreign_key "infrastructure_pattern_dependencies", "infrastructure_patterns"
+  add_foreign_key "issue_histories", "issues"
+  add_foreign_key "issue_histories", "users"
+  add_foreign_key "issues", "cohort_sprints"
+  add_foreign_key "issues", "cohorts"
+  add_foreign_key "issues", "issues", column: "parent_id"
+  add_foreign_key "issues", "users", column: "assignee_id"
+  add_foreign_key "issues", "users", column: "reporter_id"
   add_foreign_key "occupation_skill_evidences", "cohorts"
   add_foreign_key "occupation_skill_evidences", "occupation_skills"
   add_foreign_key "occupation_skill_evidences", "users"

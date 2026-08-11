@@ -2,7 +2,7 @@ class CohortUserSerializer < ActiveModel::Serializer
   attributes :id, :cohort_id, :user_id, :occupation_id, :status,
              :created_at, :updated_at, :occupation_title, :user_email, :user_username,
              :cohort_title, :cohort_subtitle, :cohort_description,
-             :cohort_start_date, :cohort_end_date,
+             :cohort_start_date, :cohort_end_date, :cohort_issue_key_prefix,
              :cohort_sprints_count, :cohort_sprints
 
   def occupation_title
@@ -27,6 +27,10 @@ class CohortUserSerializer < ActiveModel::Serializer
 
   def cohort_description
     object.cohort&.description
+  end
+
+  def cohort_issue_key_prefix
+    object.cohort&.issue_key_prefix
   end
 
   def cohort_start_date

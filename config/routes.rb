@@ -217,10 +217,17 @@ Rails.application.routes.draw do
   end
   resources :cohorts do
     resources :cohort_sprints, only: %i[index create]
+    resources :issues, only: %i[index create]
     member do
       post :enter_as_admin
       patch :update_description
     end
+  end
+  resources :issues, only: %i[show update destroy] do
+    collection do
+      patch :reorder
+    end
+    resources :issue_histories, only: %i[index]
   end
   resources :cohort_sprints, only: %i[show update destroy] do
     member do

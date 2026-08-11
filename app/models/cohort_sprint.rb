@@ -1,5 +1,6 @@
 class CohortSprint < ApplicationRecord
   belongs_to :cohort
+  has_many :issues, dependent: :nullify
 
   validates :position, presence: true,
                        uniqueness: { scope: :cohort_id },

@@ -104,7 +104,8 @@ class CohortsController < ApplicationController
 
   def cohort_params
     params.require(:cohort).permit(
-      :start_date, :end_date, :title, :subtitle, :video_url, :description
+      :start_date, :end_date, :title, :subtitle, :video_url, :description,
+      :issue_key_prefix
     )
   end
 
